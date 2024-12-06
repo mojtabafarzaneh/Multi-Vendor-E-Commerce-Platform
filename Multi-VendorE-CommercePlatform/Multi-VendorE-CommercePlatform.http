@@ -1,0 +1,6 @@
+@Multi_VendorE_CommercePlatform_HostAddress = http://localhost:5255
+
+GET {{Multi_VendorE_CommercePlatform_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
