@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MultiVendoerECommercePlatform.Unit.Test")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+9fddb384f49f9bf007239ed1a4ac893b9e834e7b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+57e1cf1f195630f01f2fdda2b233c010368a6b7d")]
 [assembly: System.Reflection.AssemblyProductAttribute("MultiVendoerECommercePlatform.Unit.Test")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MultiVendoerECommercePlatform.Unit.Test")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

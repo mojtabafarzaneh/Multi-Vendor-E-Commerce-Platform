@@ -1,7 +1,7 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.Diagnostics;
+using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.Data;
 using Multi_VendorE_CommercePlatform.Contracts.Authentication;
 using Multi_VendorE_CommercePlatform.Models;
 using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
@@ -51,16 +51,13 @@ public class AuthService: IAuthService
         try
         {
             var user = await _authManager.DoesUserExist(request.Email);
-            if (user == null)
+            
+            if (user != null && !await _authManager.DoesPasswordValid(user, request.Password))
             {
                 throw new UnauthorizedAccessException("Invalid username or password");
             }
 
-            if (!await _authManager.DoesPasswordValid(user, request.Password))
-            {
-                throw new UnauthorizedAccessException("Invalid username or password");
-            }
-
+            Debug.Assert(user != null, nameof(user) + " != null");
             var token = await _authManager.GenerateAuthenticationToken(user);
             var refreshToken = await _authManager.GenerateAuthenticationRefreshToken(user);
             return new AuthUserResponse
@@ -94,18 +91,13 @@ public class AuthService: IAuthService
                 throw new UnauthorizedAccessException("Invalid username or password");
             }
             var user = await _authManager.DoesUserExist(email);
-            if (user == null)
-            {
-                _logger.LogWarning($"No user found with email: {email}");
-                throw new UnauthorizedAccessException("Invalid username or password");
-            }
 
-            if (!await _authManager.DoesTokenExist(request, user))
+            if (user != null && !await _authManager.DoesTokenExist(request, user))
             {
                 throw new UnauthorizedAccessException("Invalid refresh token");
             }
             
-            var token = await _authManager.GenerateAuthenticationToken(user);
+            var token = await _authManager.GenerateAuthenticationToken(user ?? throw new InvalidOperationException());
             var refreshToken = await _authManager.GenerateAuthenticationRefreshToken(user);
                 
             return new AuthUserResponse
