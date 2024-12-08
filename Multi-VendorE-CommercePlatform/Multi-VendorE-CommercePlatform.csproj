@@ -11,6 +11,7 @@
     <ItemGroup>
         <PackageReference Include="AutoMapper" Version="13.0.1" />
         <PackageReference Include="FluentValidation" Version="11.11.0" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -21,7 +22,23 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Controllers\" />
+      <Compile Remove="Contracts\Responses\**" />
+      <Compile Remove="Contracts\Requests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Contracts\Responses\**" />
+      <EmbeddedResource Remove="Contracts\Requests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Content Remove="Contracts\Responses\**" />
+      <Content Remove="Contracts\Requests\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Remove="Contracts\Responses\**" />
+      <None Remove="Contracts\Requests\**" />
     </ItemGroup>
 
 </Project>

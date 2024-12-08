@@ -1,8 +1,17 @@
+using System.Text;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Multi_VendorE_CommercePlatform.Configuration;
+using Multi_VendorE_CommercePlatform.Middleware;
 using Multi_VendorE_CommercePlatform.Models;
 using Multi_VendorE_CommercePlatform.Models.Entities;
+using Multi_VendorE_CommercePlatform.Repositories.Implementations;
+using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
+using Multi_VendorE_CommercePlatform.Services.Implenetations;
+using Multi_VendorE_CommercePlatform.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -42,6 +51,35 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+//Add Authentication
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+}).AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuerSigningKey = true,
+        ValidateIssuer = true,
+        ValidateLifetime = true,
+        ValidateAudience = true,
+        ClockSkew = TimeSpan.Zero,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"] ?? throw new InvalidOperationException()))
+    };
+});
+
+//mapperConfiguration
+builder.Services.AddAutoMapper(typeof(MapperConfiguration));
+
+//services implementation 
+builder.Services.AddScoped<IAuthService, AuthService>();
+
+//managers implementation
+builder.Services.AddScoped<IAuthManager, AuthManager>();
+
 //Data protection
 builder.Services.AddDataProtection();
 
@@ -72,5 +110,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<DurationLoggerMiddleware>();
+app.UseMiddleware<ErrorHandlerMiddleware>();
 
 app.Run();
