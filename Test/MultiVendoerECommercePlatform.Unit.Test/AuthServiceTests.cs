@@ -5,6 +5,7 @@ using FluentAssertions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Logging;
 using Multi_VendorE_CommercePlatform.Contracts.Authentication;
+using Multi_VendorE_CommercePlatform.Contracts.Profiles;
 using Multi_VendorE_CommercePlatform.Models;
 using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
 using Multi_VendorE_CommercePlatform.Services.Implenetations;
@@ -18,29 +19,37 @@ public class AuthServiceTests
     private readonly IAuthManager _mockAuthManager;
     private readonly IMapper _mockMapper;
     private readonly AuthService _authService;
+    private readonly ICustomerManager _mockCustomerManager;
 
     public AuthServiceTests()
     {
         _mockLogger = Substitute.For<ILogger<AuthService>>();
         _mockAuthManager = Substitute.For<IAuthManager>();
         _mockMapper = Substitute.For<IMapper>();
-        _authService = new AuthService(_mockLogger, _mockAuthManager, _mockMapper);
+        _mockCustomerManager = Substitute.For<ICustomerManager>();
+        _authService = new AuthService(_mockLogger, _mockAuthManager, _mockMapper, _mockCustomerManager);
     }
 
     #region Registration Tests
+ 
     [Fact]
     public async Task Registration_ValidRequest_ShouldSucceed()
     {
         // Arrange
-        var request = new RegistrationRequest 
-        { 
-            Email = "test@example.com", 
-            Password = "StrongPassword123!" 
+        var request = new RegistrationRequest
+        {
+            Email = "test@example.com",
+            Password = "StrongPassword123!",
+            FullName = "John Doe",
+            Address = "123 Main St, Anytown USA"
         };
-        var user = new User { UserName = request.Email };
+        var user = new User { UserName = request.Email, Id = Guid.NewGuid() };
+        var customer = new Customer { UserId = user.Id, FullName = request.FullName, Address = request.Address };
 
-        _mockMapper.Map<User>(request).Returns(user);
+        _mockMapper.Map<User>(Arg.Any<CreateUser>()).Returns(user);
+        _mockMapper.Map<Customer>(Arg.Any<CreateCustomer>()).Returns(customer);
         _mockAuthManager.Register(user, request.Password).Returns(Enumerable.Empty<IdentityError>());
+        _mockCustomerManager.Create(customer).Returns(Task.CompletedTask);
 
         // Act
         var result = await _authService.Registration(request);
@@ -48,25 +57,31 @@ public class AuthServiceTests
         // Assert
         result.Should().BeEmpty();
         await _mockAuthManager.Received(1).Register(user, request.Password);
-        _mockMapper.Received(1).Map<User>(request);
+        await _mockCustomerManager.Received(1).Create(customer);
+        _mockMapper.Received(1).Map<User>(Arg.Any<CreateUser>());
+        _mockMapper.Received(1).Map<Customer>(Arg.Any<CreateCustomer>());
     }
 
     [Fact]
     public async Task Registration_FailedRegistration_ShouldThrowException()
     {
         // Arrange
-        var request = new RegistrationRequest 
-        { 
-            Email = "test@example.com", 
-            Password = "StrongPassword123!" 
+        var request = new RegistrationRequest
+        {
+            Email = "test@example.com",
+            Password = "StrongPassword123!",
+            FullName = "John Doe",
+            Address = "123 Main St, Anytown USA"
         };
-        var user = new User { UserName = request.Email };
+        var user = new User { UserName = request.Email, Id = Guid.NewGuid() };
+        var customer = new Customer { UserId = user.Id, FullName = request.FullName, Address = request.Address };
         var identityErrors = new[]
         {
             new IdentityError { Description = "Password too weak" }
         };
 
-        _mockMapper.Map<User>(request).Returns(user);
+        _mockMapper.Map<User>(Arg.Any<CreateUser>()).Returns(user);
+        _mockMapper.Map<Customer>(Arg.Any<CreateCustomer>()).Returns(customer);
         _mockAuthManager.Register(user, request.Password).Returns(identityErrors);
 
         // Act
@@ -75,6 +90,32 @@ public class AuthServiceTests
         // Assert
         await act.Should().ThrowAsync<Exception>()
             .WithMessage("Registration failed: Password too weak");
+        _mockLogger.Received(1);
+    }
+
+    [Fact]
+    public async Task Registration_CustomerCreationFailed_ShouldThrowException()
+    {
+        // Arrange
+        var request = new RegistrationRequest
+        {
+            Email = "test@example.com",
+            Password = "StrongPassword123!",
+            FullName = "John Doe",
+            Address = "123 Main St, Anytown USA"
+        };
+        var user = new User { UserName = request.Email, Id = Guid.NewGuid() };
+        var customer = new Customer { UserId = user.Id, FullName = request.FullName, Address = request.Address };
+
+        _mockMapper.Map<User>(Arg.Any<CreateUser>()).Returns(user);
+        _mockMapper.Map<Customer>(Arg.Any<CreateCustomer>()).Returns((Customer)null);
+
+        // Act
+        Func<Task> act = async () => await _authService.Registration(request);
+
+        // Assert
+        await act.Should().ThrowAsync<ArgumentException>()
+            .WithMessage("Customer is not populated");
         _mockLogger.Received(1);
     }
     #endregion
