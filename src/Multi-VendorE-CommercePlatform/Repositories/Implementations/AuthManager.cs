@@ -27,12 +27,21 @@ public class AuthManager: IAuthManager
         _context = context;
     }
 
-    public async Task<IEnumerable<IdentityError>> Register(User request, string password)
+    public async Task<IEnumerable<IdentityError>> RegisterCustomer(User request, string password)
     {
         var result = await _userManager.CreateAsync(request, password);
         if (result.Succeeded)
         {
             await _userManager.AddToRoleAsync(request, "Customer");
+        }
+        return result.Errors;
+    }
+    public async Task<IEnumerable<IdentityError>> RegisterVendor(User request, string password)
+    {
+        var result = await _userManager.CreateAsync(request, password);
+        if (result.Succeeded)
+        {
+            await _userManager.AddToRoleAsync(request, "Vendor");
         }
         return result.Errors;
     }
@@ -97,7 +106,21 @@ public class AuthManager: IAuthManager
         
         return token;
     }
-    
+
+    public async Task Remove(User user)
+    {
+        try
+        {
+            await _userManager.DeleteAsync(user);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+        
+    }
+
     public async Task<bool> DoesTokenExist(AuthUserResponse request, User user)
     {
         return await  _userManager.VerifyUserTokenAsync(

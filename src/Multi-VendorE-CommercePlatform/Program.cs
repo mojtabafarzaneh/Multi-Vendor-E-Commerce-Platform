@@ -5,11 +5,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Multi_VendorE_CommercePlatform.Configuration;
+using Multi_VendorE_CommercePlatform.Helpers;
 using Multi_VendorE_CommercePlatform.Middleware;
 using Multi_VendorE_CommercePlatform.Models;
 using Multi_VendorE_CommercePlatform.Models.Entities;
 using Multi_VendorE_CommercePlatform.Repositories.Implementations;
 using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
+using Multi_VendorE_CommercePlatform.Services.Impelementation;
 using Multi_VendorE_CommercePlatform.Services.Implenetations;
 using Multi_VendorE_CommercePlatform.Services.Interfaces;
 
@@ -71,16 +73,28 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+//httpContextAccessor
+builder.Services.AddHttpContextAccessor();
+
+
 //mapperConfiguration
 builder.Services.AddAutoMapper(typeof(MapperConfiguration));
 
 //services implementation 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
+builder.Services.AddScoped<IVendorService, VendorService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 //managers implementation
 builder.Services.AddScoped<IAuthManager, AuthManager>();
 builder.Services.AddScoped<ICustomerManager, CustomerManager>();
+builder.Services.AddScoped<IVendorManager, VendorManager>();
+builder.Services.AddScoped<IAdminManager, AdminManager>();
+
+//helpers
+builder.Services.AddScoped<RoleHelper>();
+builder.Services.AddScoped<UserHelper>();
 
 //Data protection
 builder.Services.AddDataProtection();

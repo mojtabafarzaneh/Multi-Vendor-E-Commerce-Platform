@@ -16,16 +16,22 @@ public class AuthService: IAuthService
     private readonly ILogger<AuthService> _logger;
     private readonly IAuthManager _authManager;
     private readonly IMapper _mapper;
+    private readonly IVendorManager _vendorManager;
 
-    public AuthService(ILogger<AuthService> logger, IAuthManager authManager, IMapper mapper, ICustomerManager customerManager)
+    public AuthService(ILogger<AuthService> logger,
+        IAuthManager authManager,
+        IMapper mapper,
+        ICustomerManager customerManager,
+        IVendorManager vendorManager)
     {
         _logger = logger;
         _authManager = authManager;
         _mapper = mapper;
         _customerManager = customerManager;
+        _vendorManager = vendorManager;
     }
 
-    public async Task<IEnumerable<IdentityError>> Registration(RegistrationRequest request)
+    public async Task<IEnumerable<IdentityError>> CustomerRegistration(CustomerRegistrationRequest request)
     {
         try
         {
@@ -48,7 +54,7 @@ public class AuthService: IAuthService
                 throw new ArgumentException("Customer is not populated");
             }
             user.UserName = user.Email;
-            var errors = await _authManager.Register(user, request.Password);
+            var errors = await _authManager.RegisterCustomer(user, request.Password);
             
             var enumerable = errors as IdentityError[] ?? errors.ToArray();
             var identityErrors = enumerable as IdentityError[] ?? enumerable.ToArray();
@@ -63,6 +69,62 @@ public class AuthService: IAuthService
                 await _customerManager.Create(customer);
             }
             return enumerable;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<IEnumerable<IdentityError>> VendorRegistration(VendorRegistrationRequest request)
+    {
+        try
+        {
+            if (request == null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            var createUser = new CreateUser
+            {
+                Email = request.Email,
+                Password = request.Password
+            };
+            var createVendor = new CreateVendor
+            {
+                Address = request.Address,
+                BusinessEmail = request.BusinessEmail,
+                BusinessPhone = request.BusinessPhone,
+                BusinessName = request.BusinessName,
+            };
+            var user = _mapper.Map<User>(createUser);
+            var vendor = _mapper.Map<Vendor>(createVendor);
+            user.UserName = user.Email;
+            var errors = await _authManager
+                .RegisterVendor(user, request.Password);
+            
+            var enumerable = errors as IdentityError[] ?? errors.ToArray();
+            var identityErrors = enumerable as IdentityError[] ?? enumerable.ToArray();
+            if (identityErrors.Any())
+            {
+                throw new ($"Registration failed: {identityErrors.First().Description}");
+            }
+            
+            if (identityErrors.Length == 0)
+            {
+
+                if (await _vendorManager.DoesVendorExist(vendor))
+                {
+                    await _authManager.Remove(user);
+                    throw new ArgumentException("Vendor already exists");
+                    
+                }
+                vendor.UserId = user.Id;
+                await _vendorManager.Create(vendor);
+            }
+            return enumerable;
+            
+
         }
         catch (Exception ex)
         {

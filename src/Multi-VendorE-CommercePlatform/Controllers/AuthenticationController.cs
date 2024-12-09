@@ -20,9 +20,9 @@ public class AuthenticationController: ControllerBase
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public async Task<IActionResult> Register([FromBody] RegistrationRequest request)
+    public async Task<IActionResult> Register([FromBody] CustomerRegistrationRequest request)
     {
-        await _authService.Registration(request);
+        await _authService.CustomerRegistration(request);
         return Ok();
     }
 
@@ -40,5 +40,15 @@ public class AuthenticationController: ControllerBase
     {
         var response = await _authService.RefreshToken(request);
         return Ok(response);
+    }
+    
+    [HttpPost(ApiEndpoints.Registration.VendorRegister)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    public async Task<IActionResult> VendorRegister([FromBody] VendorRegistrationRequest request)
+    {
+        await _authService.VendorRegistration(request);
+        return Ok();
     }
 }
