@@ -76,9 +76,11 @@ builder.Services.AddAutoMapper(typeof(MapperConfiguration));
 
 //services implementation 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 
 //managers implementation
 builder.Services.AddScoped<IAuthManager, AuthManager>();
+builder.Services.AddScoped<ICustomerManager, CustomerManager>();
 
 //Data protection
 builder.Services.AddDataProtection();

@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Multi_VendorE_CommercePlatform.Contracts.Authentication;
+using Multi_VendorE_CommercePlatform.Contracts.Profiles;
 using Multi_VendorE_CommercePlatform.Models;
 using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
 using Multi_VendorE_CommercePlatform.Services.Interfaces;
@@ -11,23 +12,42 @@ namespace Multi_VendorE_CommercePlatform.Services.Implenetations;
 
 public class AuthService: IAuthService
 {
+    private readonly ICustomerManager _customerManager;
     private readonly ILogger<AuthService> _logger;
     private readonly IAuthManager _authManager;
     private readonly IMapper _mapper;
 
-    public AuthService(ILogger<AuthService> logger, IAuthManager authManager, IMapper mapper)
+    public AuthService(ILogger<AuthService> logger, IAuthManager authManager, IMapper mapper, ICustomerManager customerManager)
     {
         _logger = logger;
         _authManager = authManager;
         _mapper = mapper;
+        _customerManager = customerManager;
     }
 
     public async Task<IEnumerable<IdentityError>> Registration(RegistrationRequest request)
     {
         try
         {
-            var user = _mapper.Map<User>(request);
-            user.UserName = request.Email;
+            if (request == null)
+                throw new ArgumentNullException(nameof(request));
+            var createUser = new CreateUser
+            {
+                Email = request.Email,
+                Password = request.Password
+            };
+            var createCustomer = new CreateCustomer
+            {
+                Address = request.Address,
+                FullName = request.FullName,
+            };
+            var user = _mapper.Map<User>(createUser);
+            var customer = _mapper.Map<Customer>(createCustomer);
+            if (customer == null)
+            {
+                throw new ArgumentException("Customer is not populated");
+            }
+            user.UserName = user.Email;
             var errors = await _authManager.Register(user, request.Password);
             
             var enumerable = errors as IdentityError[] ?? errors.ToArray();
@@ -37,6 +57,11 @@ public class AuthService: IAuthService
                 throw new ($"Registration failed: {identityErrors.First().Description}");
             }
 
+            if (identityErrors.Length == 0)
+            {
+                customer.UserId = user.Id;
+                await _customerManager.Create(customer);
+            }
             return enumerable;
         }
         catch (Exception ex)

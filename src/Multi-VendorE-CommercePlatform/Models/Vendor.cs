@@ -5,6 +5,7 @@ namespace Multi_VendorE_CommercePlatform.Models;
 public class Vendor
 {
     public Guid Id { get; set; }
+    public Guid UserId { get; set; }
     public User User { get; set; }
     public string BusinessName { get; set; }
     [EmailAddress]

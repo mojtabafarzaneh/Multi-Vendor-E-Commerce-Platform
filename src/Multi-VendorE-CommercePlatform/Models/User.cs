@@ -8,6 +8,9 @@ public class User: IdentityUser<Guid>
     {
         Id = Guid.NewGuid();
     }
+    
+    public Customer Customer { get; set; }
+    public Vendor Vendor { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

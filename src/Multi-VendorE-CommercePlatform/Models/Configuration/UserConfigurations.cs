@@ -20,5 +20,13 @@ public class UserConfigurations: IEntityTypeConfiguration<User>
             .Property<DateTime>("UpdatedAt")
             .HasColumnType("datetime")
             .HasValueGenerator<CreatedAtValueGenerator>();
+        builder
+            .HasOne(u => u.Customer)
+            .WithOne(c => c.User)
+            .HasForeignKey<Customer>(c => c.UserId);
+        builder
+            .HasOne(u => u.Vendor)
+            .WithOne(v => v.User)
+            .HasForeignKey<Vendor>(v => v.UserId);
     }
 }

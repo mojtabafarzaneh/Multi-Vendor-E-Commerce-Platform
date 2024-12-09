@@ -8,10 +8,6 @@ public class VendorConfigurations: IEntityTypeConfiguration<Vendor>
 {
     public void Configure(EntityTypeBuilder<Vendor> builder)
     {
-        builder
-            .HasOne(v => v.User)
-            .WithOne()
-            .HasForeignKey<Vendor>(v => v.Id);
         
         builder
             .Property<Guid>("Id")

@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Multi_VendorE_CommercePlatform.Contracts.Authentication;
 using Multi_VendorE_CommercePlatform.Models;
+using Multi_VendorE_CommercePlatform.Models.Entities;
 using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
 
 namespace Multi_VendorE_CommercePlatform.Repositories.Implementations;
@@ -12,16 +13,18 @@ namespace Multi_VendorE_CommercePlatform.Repositories.Implementations;
 public class AuthManager: IAuthManager
 {
     private readonly UserManager<User> _userManager;
+    private readonly ApplicationDbContext _context;
     private readonly ILogger<AuthManager> _logger;
     private readonly IConfiguration _config;
 
     public AuthManager(UserManager<User> userManager,
         ILogger<AuthManager> logger,
-        IConfiguration config)
+        IConfiguration config, ApplicationDbContext context)
     {
         _userManager = userManager;
         _logger = logger;
         _config = config;
+        _context = context;
     }
 
     public async Task<IEnumerable<IdentityError>> Register(User request, string password)
