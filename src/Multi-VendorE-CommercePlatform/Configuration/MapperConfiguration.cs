@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.Reflection;
+using AutoMapper;
 using Microsoft.AspNetCore.Identity.Data;
 using Multi_VendorE_CommercePlatform.Contracts.Authentication;
 using Multi_VendorE_CommercePlatform.Contracts.Profiles;
@@ -27,9 +28,11 @@ public class MapperConfiguration: Profile
         CreateMap<Vendor, CreateVendor>().ReverseMap();
         CreateMap<Vendor, VendorRegistrationRequest>().ReverseMap();
         CreateMap<Vendor, VendorResponse>().ReverseMap();
+        CreateMap<Vendor, UnApproveVendorResponse>().ReverseMap();
         
         //products
         CreateMap<Product, ProductResponse>().ReverseMap();
+        CreateMap<Product, UnApproveProductResponse>().ReverseMap();
     }
     
 }

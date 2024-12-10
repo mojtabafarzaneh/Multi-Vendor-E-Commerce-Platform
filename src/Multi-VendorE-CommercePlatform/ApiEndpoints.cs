@@ -25,6 +25,9 @@ public class ApiEndpoints
     public static class Admin
     {
         private const string Base = $"{ApiBase}/admin";
-        public const string Register = $"{Base}/manage";
+        public const string UnApproveVendors = $"{Base}/vendor";
+        public const string ChangeVendorStatus = $"{Base}/vendor/status/{{id:guid}}";
+        public const string ChangeProductStatus = $"{Base}/vendor/product/status/{{id:guid}}";
+        public const string UnApproveProducts = $"{Base}/vendor/products";
     }
 }

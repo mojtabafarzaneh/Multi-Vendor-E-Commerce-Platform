@@ -138,8 +138,13 @@ public class AuthService: IAuthService
         try
         {
             var user = await _authManager.DoesUserExist(request.Email);
+
+            if (user == null)
+            {
+                throw new ArgumentException("Email is not populated");
+            }
             
-            if (user != null && !await _authManager.DoesPasswordValid(user, request.Password))
+            if (!await _authManager.DoesPasswordValid(user, request.Password))
             {
                 throw new UnauthorizedAccessException("Invalid username or password");
             }

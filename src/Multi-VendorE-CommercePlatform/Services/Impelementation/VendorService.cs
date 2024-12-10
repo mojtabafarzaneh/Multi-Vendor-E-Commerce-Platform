@@ -5,7 +5,7 @@ using Multi_VendorE_CommercePlatform.Helpers;
 using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
 using Multi_VendorE_CommercePlatform.Services.Interfaces;
 
-namespace Multi_VendorE_CommercePlatform.Services.Impelementation;
+namespace Multi_VendorE_CommercePlatform.Services.Implenetations;
 
 public class VendorService: IVendorService
 {
@@ -53,6 +53,11 @@ public class VendorService: IVendorService
             {
                 throw new UnauthorizedAccessException("User is not a Vendor.");
             }
+
+            if (!vendor.Approved)
+            {
+                throw new ArgumentException("Your application is currently not approved.");
+            }
             var vendorResponse = _mapper.Map<VendorResponse>(vendor);
             vendorResponse.Products = _mapper.Map<ICollection<ProductResponse>>(vendor.Products);
             
@@ -84,6 +89,11 @@ public class VendorService: IVendorService
             if (!isVendor || !await _vendorManager.DoesVendorExist(userGuid) )
             {
                 throw new UnauthorizedAccessException("User is not a Vendor.");
+            }
+            var vendor = await _vendorManager.GetVendorById(userGuid);
+            if (!vendor.Approved)
+            {
+                throw new ArgumentException("Your application is currently not approved.");
             }
 
             await _vendorManager.UpdateEmail(userGuid, request.BusinessEmail);
@@ -119,6 +129,10 @@ public class VendorService: IVendorService
             }
 
             var vendor = await _vendorManager.GetVendorById(userGuid);
+            if (!vendor.Approved)
+            {
+                throw new ArgumentException("Your application is currently not approved.");
+            }
 
             await _vendorManager.Delete(vendor);
         }

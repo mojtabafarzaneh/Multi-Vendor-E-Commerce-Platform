@@ -11,7 +11,6 @@ using Multi_VendorE_CommercePlatform.Models;
 using Multi_VendorE_CommercePlatform.Models.Entities;
 using Multi_VendorE_CommercePlatform.Repositories.Implementations;
 using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
-using Multi_VendorE_CommercePlatform.Services.Impelementation;
 using Multi_VendorE_CommercePlatform.Services.Implenetations;
 using Multi_VendorE_CommercePlatform.Services.Interfaces;
 
@@ -91,6 +90,7 @@ builder.Services.AddScoped<IAuthManager, AuthManager>();
 builder.Services.AddScoped<ICustomerManager, CustomerManager>();
 builder.Services.AddScoped<IVendorManager, VendorManager>();
 builder.Services.AddScoped<IAdminManager, AdminManager>();
+
 
 //helpers
 builder.Services.AddScoped<RoleHelper>();

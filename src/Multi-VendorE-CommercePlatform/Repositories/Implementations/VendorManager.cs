@@ -2,7 +2,7 @@
 using Multi_VendorE_CommercePlatform.Models;
 using Multi_VendorE_CommercePlatform.Models.Entities;
 using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
-using Multi_VendorE_CommercePlatform.Services.Impelementation;
+using Multi_VendorE_CommercePlatform.Services.Implenetations;
 
 namespace Multi_VendorE_CommercePlatform.Repositories.Implementations;
 
@@ -69,16 +69,22 @@ public class VendorManager: IVendorManager
 
     public async Task Delete(Vendor vendor)
     {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
+            var user = await _context.Users
+                .Where(x => x.Id == vendor.UserId).FirstOrDefaultAsync();
             _context.Vendors.Remove(vendor);
             await _context.SaveChangesAsync();
+            if (user != null) _context.Users.Remove(user);
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
         }
         catch (Exception ex)
         {
+            await transaction.RollbackAsync();
             _logger.LogError(ex, ex.Message);
             throw;
         }
-        
     }
 }

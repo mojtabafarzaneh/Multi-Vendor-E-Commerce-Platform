@@ -9,7 +9,7 @@ public class UserHelper
         _ContextAccessor = contextAccessor;
     }
 
-    public string UserId()
+    public  string UserId()
     {
         var user = _ContextAccessor.HttpContext.User;
         if (user == null || !user.Identity.IsAuthenticated)

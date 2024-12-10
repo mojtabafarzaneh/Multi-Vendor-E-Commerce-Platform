@@ -4,6 +4,7 @@ namespace Multi_VendorE_CommercePlatform.Contracts.Profiles;
 
 public class VendorResponse
 {
+    public Guid Id { get; set; }
     public string BusinessName { get; set; }
     public string BusinessEmail { get; set; }
     public string BusinessPhone { get; set; }
