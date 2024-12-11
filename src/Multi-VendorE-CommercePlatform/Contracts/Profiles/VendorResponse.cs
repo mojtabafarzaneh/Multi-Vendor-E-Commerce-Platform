@@ -10,5 +10,4 @@ public class VendorResponse
     public string BusinessPhone { get; set; }
     public string Address { get; set; }
     public ICollection<ProductResponse> Products { get; set; }
-    
 }

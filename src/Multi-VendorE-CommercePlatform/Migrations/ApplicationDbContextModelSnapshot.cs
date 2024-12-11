@@ -190,7 +190,7 @@ namespace Multi_VendorE_CommercePlatform.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Category");
+                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Multi_VendorE_CommercePlatform.Models.Customer", b =>
@@ -416,19 +416,19 @@ namespace Multi_VendorE_CommercePlatform.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("0fce21d5-2574-46ef-951d-8aa8b93201d6"),
+                            Id = new Guid("80974aef-1e60-4d29-be6d-4d2c68edabf9"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("40141f7e-62a9-4366-8fb0-d5eac6825fd6"),
+                            Id = new Guid("c95da3f1-8246-44b9-8f6e-c9e23de342fc"),
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         },
                         new
                         {
-                            Id = new Guid("5e881292-1d8d-434c-8f9f-10c2426dea46"),
+                            Id = new Guid("fcfd6e15-777e-4de3-8f57-24a918875264"),
                             Name = "Vendor",
                             NormalizedName = "VENDOR"
                         });
@@ -597,7 +597,7 @@ namespace Multi_VendorE_CommercePlatform.Migrations
                     b.HasOne("Multi_VendorE_CommercePlatform.Models.Category", "Category")
                         .WithMany("Products")
                         .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Multi_VendorE_CommercePlatform.Models.Vendor", "Vendor")

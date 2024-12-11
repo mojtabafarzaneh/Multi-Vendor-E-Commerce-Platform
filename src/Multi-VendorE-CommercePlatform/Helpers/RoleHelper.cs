@@ -14,20 +14,14 @@ public class RoleHelper
     public bool IsAdminUser()
     {
         var user = _ContextAccessor.HttpContext?.User;
-        if (user is null || !user.Identity.IsAuthenticated)
-        {
-            return false;
-        }
+        if (user is null || !user.Identity.IsAuthenticated) return false;
         return user.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value == "Admin");
     }
 
     public bool IsVendorUser()
     {
         var user = _ContextAccessor.HttpContext?.User;
-        if (user is null || !user.Identity.IsAuthenticated)
-        {
-            return false;
-        }
+        if (user is null || !user.Identity.IsAuthenticated) return false;
         return user.Claims.Any(c => c.Type == ClaimTypes.Role && c.Value == "Vendor");
     }
 }

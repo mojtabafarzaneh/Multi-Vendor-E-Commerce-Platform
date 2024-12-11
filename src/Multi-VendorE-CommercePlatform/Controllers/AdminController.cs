@@ -5,7 +5,7 @@ using Multi_VendorE_CommercePlatform.Services.Interfaces;
 namespace Multi_VendorE_CommercePlatform.Controllers;
 
 [ApiController]
-public class AdminController: ControllerBase
+public class AdminController : ControllerBase
 {
     private readonly IAdminService _adminService;
 
@@ -49,5 +49,4 @@ public class AdminController: ControllerBase
         await _adminService.ApproveProducts(id);
         return Ok();
     }
-    
 }

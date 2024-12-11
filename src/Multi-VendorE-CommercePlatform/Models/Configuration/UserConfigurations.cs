@@ -4,7 +4,7 @@ using Multi_VendorE_CommercePlatform.Models.ValueGenerator;
 
 namespace Multi_VendorE_CommercePlatform.Models.Configuration;
 
-public class UserConfigurations: IEntityTypeConfiguration<User>
+public class UserConfigurations : IEntityTypeConfiguration<User>
 {
     public void Configure(EntityTypeBuilder<User> builder)
     {

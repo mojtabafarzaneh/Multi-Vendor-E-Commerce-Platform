@@ -4,7 +4,7 @@ using Multi_VendorE_CommercePlatform.Models.ValueGenerator;
 
 namespace Multi_VendorE_CommercePlatform.Models.Configuration;
 
-public class CardItemConfigurations: IEntityTypeConfiguration<CardItem>
+public class CardItemConfigurations : IEntityTypeConfiguration<CardItem>
 {
     public void Configure(EntityTypeBuilder<CardItem> builder)
     {
@@ -21,7 +21,7 @@ public class CardItemConfigurations: IEntityTypeConfiguration<CardItem>
             .WithMany(p => p.CardItems)
             .HasForeignKey(ci => ci.ProductId)
             .OnDelete(DeleteBehavior.Restrict);
-        
+
         builder
             .Property<Guid>("Id")
             .HasColumnType("uniqueidentifier")

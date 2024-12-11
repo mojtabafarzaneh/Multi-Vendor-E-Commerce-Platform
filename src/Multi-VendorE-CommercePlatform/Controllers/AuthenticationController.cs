@@ -5,10 +5,10 @@ using Multi_VendorE_CommercePlatform.Services.Interfaces;
 namespace Multi_VendorE_CommercePlatform.Controllers;
 
 [ApiController]
-public class AuthenticationController: ControllerBase
+public class AuthenticationController : ControllerBase
 {
-    private readonly ILogger<AuthenticationController> _logger;
     private readonly IAuthService _authService;
+    private readonly ILogger<AuthenticationController> _logger;
 
     public AuthenticationController(IAuthService authService, ILogger<AuthenticationController> logger)
     {
@@ -28,7 +28,7 @@ public class AuthenticationController: ControllerBase
 
     [HttpPost(ApiEndpoints.Registration.Login)]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    public async Task<IActionResult> Login([FromBody]  UserLoginRequest request)
+    public async Task<IActionResult> Login([FromBody] UserLoginRequest request)
     {
         var response = await _authService.Login(request);
         return Ok(response);
@@ -41,7 +41,7 @@ public class AuthenticationController: ControllerBase
         var response = await _authService.RefreshToken(request);
         return Ok(response);
     }
-    
+
     [HttpPost(ApiEndpoints.Registration.VendorRegister)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]

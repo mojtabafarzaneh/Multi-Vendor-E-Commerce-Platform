@@ -1,15 +1,13 @@
-﻿using System.Reflection;
-using AutoMapper;
-using Microsoft.AspNetCore.Identity.Data;
-using Multi_VendorE_CommercePlatform.Contracts.Authentication;
+﻿using Multi_VendorE_CommercePlatform.Contracts.Authentication;
 using Multi_VendorE_CommercePlatform.Contracts.Profiles;
 using Multi_VendorE_CommercePlatform.Contracts.Project;
 using Multi_VendorE_CommercePlatform.Models;
-using Multi_VendorE_CommercePlatform.Repositories.Implementations;
+using AutoMapper;
+
 
 namespace Multi_VendorE_CommercePlatform.Configuration;
 
-public class MapperConfiguration: Profile
+public class MapperConfiguration : Profile
 {
     public MapperConfiguration()
     {
@@ -19,20 +17,19 @@ public class MapperConfiguration: Profile
         CreateMap<User, AuthUserResponse>().ReverseMap();
         CreateMap<User, CreateUser>().ReverseMap();
         CreateMap<CreateUser, CustomerRegistrationRequest>().ReverseMap();
-        
+
         //Costumer
         CreateMap<Customer, CreateCustomer>().ReverseMap();
         CreateMap<CreateCustomer, CustomerRegistrationRequest>().ReverseMap();
-        
+
         //Vendor
         CreateMap<Vendor, CreateVendor>().ReverseMap();
         CreateMap<Vendor, VendorRegistrationRequest>().ReverseMap();
         CreateMap<Vendor, VendorResponse>().ReverseMap();
         CreateMap<Vendor, UnApproveVendorResponse>().ReverseMap();
-        
+
         //products
         CreateMap<Product, ProductResponse>().ReverseMap();
         CreateMap<Product, UnApproveProductResponse>().ReverseMap();
     }
-    
 }

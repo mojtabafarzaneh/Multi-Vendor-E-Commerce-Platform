@@ -4,7 +4,7 @@ using Multi_VendorE_CommercePlatform.Models.ValueGenerator;
 
 namespace Multi_VendorE_CommercePlatform.Models.Configuration;
 
-public class UserRoleConfigurations: IEntityTypeConfiguration<UserRoles>
+public class UserRoleConfigurations : IEntityTypeConfiguration<UserRoles>
 {
     public void Configure(EntityTypeBuilder<UserRoles> builder)
     {
@@ -12,7 +12,7 @@ public class UserRoleConfigurations: IEntityTypeConfiguration<UserRoles>
             .Property<Guid>("Id")
             .HasColumnType("uniqueidentifier")
             .HasValueGenerator<GuidValueGenerator>();
-     
+
         builder.HasData(
             new UserRoles
             {
@@ -23,7 +23,6 @@ public class UserRoleConfigurations: IEntityTypeConfiguration<UserRoles>
             {
                 Name = "Customer",
                 NormalizedName = "CUSTOMER"
-                
             },
             new UserRoles
             {

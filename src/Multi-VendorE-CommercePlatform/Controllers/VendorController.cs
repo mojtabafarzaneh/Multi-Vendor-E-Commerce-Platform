@@ -4,8 +4,9 @@ using Multi_VendorE_CommercePlatform.Contracts.Profiles;
 using Multi_VendorE_CommercePlatform.Services.Interfaces;
 
 namespace Multi_VendorE_CommercePlatform.Controllers;
+
 [ApiController]
-public class VendorController: ControllerBase
+public class VendorController : ControllerBase
 {
     private readonly IVendorService _vendorService;
 
@@ -40,5 +41,4 @@ public class VendorController: ControllerBase
         await _vendorService.DeleteVendorAsync();
         return Ok();
     }
-    
 }

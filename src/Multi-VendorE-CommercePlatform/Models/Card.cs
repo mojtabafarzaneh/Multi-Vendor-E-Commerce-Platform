@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Multi_VendorE_CommercePlatform.Models;
+﻿namespace Multi_VendorE_CommercePlatform.Models;
 
 public class Card
 {

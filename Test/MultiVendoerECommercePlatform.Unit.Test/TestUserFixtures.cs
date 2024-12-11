@@ -6,11 +6,11 @@ namespace TestProject1;
 
 public class TestUserFixtures
 {
-    public ClaimsPrincipal CreateUser(string userId, string email, string roles)
+    public ClaimsPrincipal CreateUser(Guid userId, string email, string roles)
     {
         var claims = new List<Claim>
         {
-            new Claim("uid", userId),
+            new Claim("uid", userId.ToString()),
             new Claim(ClaimTypes.Email, email),
             new Claim(ClaimTypes.Name, "Test User"),
             new Claim(ClaimTypes.Role, roles)
@@ -21,7 +21,7 @@ public class TestUserFixtures
         return new ClaimsPrincipal(identity);
     }
 
-    public IHttpContextAccessor CreateHttpContextAccessor(string userId, string email, string roles)
+    public IHttpContextAccessor CreateHttpContextAccessor(Guid userId, string email, string roles)
     {
         var contextAccessor = Substitute.For<IHttpContextAccessor>();
         var user = CreateUser(userId, email, roles);

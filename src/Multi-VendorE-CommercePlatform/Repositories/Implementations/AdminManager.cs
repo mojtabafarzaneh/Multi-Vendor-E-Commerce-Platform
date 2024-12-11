@@ -5,10 +5,10 @@ using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
 
 namespace Multi_VendorE_CommercePlatform.Repositories.Implementations;
 
-public class AdminManager: IAdminManager
+public class AdminManager : IAdminManager
 {
-    private readonly ILogger<AdminManager> _logger;
     private readonly ApplicationDbContext _context;
+    private readonly ILogger<AdminManager> _logger;
 
     public AdminManager(ILogger<AdminManager> logger, ApplicationDbContext context)
     {
@@ -24,8 +24,8 @@ public class AdminManager: IAdminManager
     public async Task<List<Vendor>> UnapprovedVendors()
     {
         var vendors = await _context.Vendors
-            .Where(x=> x.Approved ==false)
-            .ToListAsync(); 
+            .Where(x => x.Approved == false)
+            .ToListAsync();
         return vendors;
     }
 
@@ -34,10 +34,7 @@ public class AdminManager: IAdminManager
         try
         {
             var vendor = await _context.Vendors.FirstOrDefaultAsync(x => x.Id == id);
-            if (vendor == null)
-            {
-                throw new ArgumentException("Invalid vendor!");
-            }
+            if (vendor == null) throw new ArgumentException("Invalid vendor!");
 
             vendor.Approved = true;
             await _context.SaveChangesAsync();
@@ -55,7 +52,7 @@ public class AdminManager: IAdminManager
         try
         {
             var products = await _context.Products
-                .Where(x=> x.IsApproved == false)
+                .Where(x => x.IsApproved == false)
                 .ToListAsync();
             return products;
         }
@@ -79,6 +76,5 @@ public class AdminManager: IAdminManager
             _logger.LogError(ex, ex.Message);
             throw;
         }
-        
     }
 }

@@ -4,7 +4,7 @@ using Multi_VendorE_CommercePlatform.Models.ValueGenerator;
 
 namespace Multi_VendorE_CommercePlatform.Models.Configuration;
 
-public class OrderConfigurations: IEntityTypeConfiguration<Order>
+public class OrderConfigurations : IEntityTypeConfiguration<Order>
 {
     public void Configure(EntityTypeBuilder<Order> builder)
     {
@@ -12,7 +12,7 @@ public class OrderConfigurations: IEntityTypeConfiguration<Order>
             .HasOne(o => o.Customer)
             .WithMany(c => c.Orders)
             .HasForeignKey(o => o.CustomerId);
-        
+
         builder
             .Property<Guid>("Id")
             .HasColumnType("uniqueidentifier")
@@ -25,6 +25,5 @@ public class OrderConfigurations: IEntityTypeConfiguration<Order>
             .Property<DateTime>("UpdatedAt")
             .HasColumnType("datetime")
             .HasValueGenerator<CreatedAtValueGenerator>();
-
     }
 }

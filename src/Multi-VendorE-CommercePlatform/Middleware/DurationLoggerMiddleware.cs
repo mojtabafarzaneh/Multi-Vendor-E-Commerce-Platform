@@ -2,32 +2,29 @@
 
 namespace Multi_VendorE_CommercePlatform.Middleware;
 
-
-    
 public class DurationLoggerMiddleware
+{
+    private readonly ILogger<DurationLoggerMiddleware> _logger;
+    private readonly RequestDelegate _next;
+
+    public DurationLoggerMiddleware(RequestDelegate next, ILogger<DurationLoggerMiddleware> logger)
     {
-        private readonly RequestDelegate _next;
-        private readonly ILogger<DurationLoggerMiddleware> _logger;
+        _next = next;
+        _logger = logger;
+    }
 
-        public DurationLoggerMiddleware(RequestDelegate next, ILogger<DurationLoggerMiddleware> logger)
+    public async Task InvokeAsync(HttpContext context)
+    {
+        var sw = Stopwatch.StartNew();
+        var requestUrl = context.Request.Path;
+        try
         {
-            _next = next;
-            _logger = logger;
+            await _next(context);
         }
-
-        public async Task InvokeAsync(HttpContext context)
+        finally
         {
-            var sw = Stopwatch.StartNew();
-            var requestUrl = context.Request.Path;
-            try
-            {
-                await _next(context);
-            }
-            finally
-            {
-                var text = $"[{requestUrl}]: {sw.ElapsedMilliseconds} ms";
-                _logger.LogInformation(text);
-            
-            }
+            var text = $"[{requestUrl}]: {sw.ElapsedMilliseconds} ms";
+            _logger.LogInformation(text);
         }
     }
+}

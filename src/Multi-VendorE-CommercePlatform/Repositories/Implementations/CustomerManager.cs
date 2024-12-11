@@ -4,9 +4,8 @@ using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
 
 namespace Multi_VendorE_CommercePlatform.Repositories.Implementations;
 
-public class CustomerManager: ICustomerManager
+public class CustomerManager : ICustomerManager
 {
-    
     private readonly ApplicationDbContext _context;
     private readonly ILogger<CustomerManager> _logger;
 
@@ -28,6 +27,5 @@ public class CustomerManager: ICustomerManager
             _logger.LogError($"Failed to add customer to database: {customer.Id}");
             throw;
         }
-        
     }
 }

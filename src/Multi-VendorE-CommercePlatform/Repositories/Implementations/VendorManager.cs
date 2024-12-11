@@ -6,7 +6,7 @@ using Multi_VendorE_CommercePlatform.Services.Implenetations;
 
 namespace Multi_VendorE_CommercePlatform.Repositories.Implementations;
 
-public class VendorManager: IVendorManager
+public class VendorManager : IVendorManager
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<VendorService> _logger;
@@ -30,7 +30,6 @@ public class VendorManager: IVendorManager
             _logger.LogError(ex, ex.Message);
             throw;
         }
-
     }
 
     public async Task<bool> DoesVendorExist(Vendor vendor)
@@ -44,14 +43,11 @@ public class VendorManager: IVendorManager
     }
 
     public async Task<Vendor> GetVendorById(Guid id)
-    { 
-        var user =  await _context.Vendors
+    {
+        var user = await _context.Vendors
             .Include(v => v.Products)
             .FirstOrDefaultAsync(x => x.UserId == id);
-        if (user == null)
-        {
-            return null;
-        }
+        if (user == null) return null;
         return user;
     }
 
@@ -59,10 +55,7 @@ public class VendorManager: IVendorManager
     {
         var vendor = await _context.Vendors
             .FirstOrDefaultAsync(x => x.UserId == id);
-        if (vendor == null)
-        {
-            return;
-        }
+        if (vendor == null) return;
         vendor.BusinessEmail = email;
         await _context.SaveChangesAsync();
     }

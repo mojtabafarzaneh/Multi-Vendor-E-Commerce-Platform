@@ -7,15 +7,16 @@ using Multi_VendorE_CommercePlatform.Contracts.Authentication;
 using Multi_VendorE_CommercePlatform.Models;
 using Multi_VendorE_CommercePlatform.Models.Entities;
 using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
+using JwtRegisteredClaimNames = Microsoft.IdentityModel.JsonWebTokens.JwtRegisteredClaimNames;
 
 namespace Multi_VendorE_CommercePlatform.Repositories.Implementations;
 
-public class AuthManager: IAuthManager
+public class AuthManager : IAuthManager
 {
-    private readonly UserManager<User> _userManager;
+    private readonly IConfiguration _config;
     private readonly ApplicationDbContext _context;
     private readonly ILogger<AuthManager> _logger;
-    private readonly IConfiguration _config;
+    private readonly UserManager<User> _userManager;
 
     public AuthManager(UserManager<User> userManager,
         ILogger<AuthManager> logger,
@@ -30,20 +31,66 @@ public class AuthManager: IAuthManager
     public async Task<IEnumerable<IdentityError>> RegisterCustomer(User request, string password)
     {
         var result = await _userManager.CreateAsync(request, password);
-        if (result.Succeeded)
-        {
-            await _userManager.AddToRoleAsync(request, "Customer");
-        }
+        if (result.Succeeded) await _userManager.AddToRoleAsync(request, "Customer");
         return result.Errors;
     }
+
     public async Task<IEnumerable<IdentityError>> RegisterVendor(User request, string password)
     {
         var result = await _userManager.CreateAsync(request, password);
-        if (result.Succeeded)
-        {
-            await _userManager.AddToRoleAsync(request, "Vendor");
-        }
+        if (result.Succeeded) await _userManager.AddToRoleAsync(request, "Vendor");
         return result.Errors;
+    }
+
+    public async Task<string> GenerateAuthenticationRefreshToken(User user)
+    {
+        var refreshToken = await GenerateRefreshToken(user);
+
+        return refreshToken;
+    }
+
+    public async Task<string> GenerateAuthenticationToken(User user)
+    {
+        var token = await GenerateJwtToken(user);
+
+        return token;
+    }
+
+    public async Task Remove(User user)
+    {
+        try
+        {
+            await _userManager.DeleteAsync(user);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+    }
+
+    public async Task<bool> DoesTokenExist(AuthUserResponse request, User user)
+    {
+        return await _userManager.VerifyUserTokenAsync(
+            user, "MultiVendorECommerceApi",
+            "RefreshToken", request.RefreshToken);
+    }
+
+    public async Task<User?> DoesUserExist(string email)
+    {
+        var user = await _userManager.FindByEmailAsync(email);
+        if (user == null)
+        {
+            _logger.LogWarning($"No user found with email: {email}");
+            return null;
+        }
+
+        return user;
+    }
+
+    public async Task<bool> DoesPasswordValid(User user, string password)
+    {
+        return await _userManager.CheckPasswordAsync(user, password);
     }
 
     private async Task<string> GenerateJwtToken(User user)
@@ -58,10 +105,10 @@ public class AuthManager: IAuthManager
         {
             var claims = new List<Claim>
             {
-                new Claim(JwtRegisteredClaimNames.Sub, user.Email),
-                new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim("uid", user.Id.ToString())
+                new(JwtRegisteredClaimNames.Sub, user.Email),
+                new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                new(JwtRegisteredClaimNames.Email, user.Email),
+                new("uid", user.Id.ToString())
             }.Union(userClaims).Union(roleClaims);
 
             var token = new JwtSecurityToken(
@@ -78,69 +125,17 @@ public class AuthManager: IAuthManager
 
         return null!;
     }
-    
+
     private async Task<string> GenerateRefreshToken(User user)
     {
         await _userManager.RemoveAuthenticationTokenAsync(
             user, "MultiVendorECommerceApi", "RefreshToken");
-        
+
         var newRefreshToken = await _userManager.GenerateUserTokenAsync(
             user, "MultiVendorECommerceApi", "RefreshToken");
         await _userManager.SetAuthenticationTokenAsync(
             user, "MultiVendorECommerceApi", "RefreshToken", newRefreshToken);
 
         return newRefreshToken;
-    }
-    
-    public async Task<string> GenerateAuthenticationRefreshToken(User user)
-    {
-        var refreshToken = await GenerateRefreshToken(user);
-
-        return refreshToken;
-
-    }
-    
-    public async Task<string> GenerateAuthenticationToken(User user)
-    {
-        var token = await GenerateJwtToken(user);
-        
-        return token;
-    }
-
-    public async Task Remove(User user)
-    {
-        try
-        {
-            await _userManager.DeleteAsync(user);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-            throw;
-        }
-        
-    }
-
-    public async Task<bool> DoesTokenExist(AuthUserResponse request, User user)
-    {
-        return await  _userManager.VerifyUserTokenAsync(
-            user, "MultiVendorECommerceApi", 
-            "RefreshToken", request.RefreshToken);
-    }
-
-    public async Task<User?> DoesUserExist(string email)
-    {
-        var user = await _userManager.FindByEmailAsync(email);
-        if (user == null)
-        {
-            _logger.LogWarning($"No user found with email: {email}");
-            return null;
-        }
-        return user;
-    }
-
-    public async Task<bool> DoesPasswordValid(User user, string password)
-    {
-        return await _userManager.CheckPasswordAsync(user, password);
     }
 }

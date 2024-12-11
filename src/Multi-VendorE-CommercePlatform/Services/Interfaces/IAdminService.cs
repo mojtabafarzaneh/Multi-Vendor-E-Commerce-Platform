@@ -1,6 +1,5 @@
 ﻿using Multi_VendorE_CommercePlatform.Contracts.Profiles;
 using Multi_VendorE_CommercePlatform.Contracts.Project;
-using Multi_VendorE_CommercePlatform.Models;
 
 namespace Multi_VendorE_CommercePlatform.Services.Interfaces;
 
