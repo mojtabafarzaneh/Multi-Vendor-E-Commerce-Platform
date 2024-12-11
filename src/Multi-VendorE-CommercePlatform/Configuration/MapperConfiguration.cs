@@ -31,5 +31,9 @@ public class MapperConfiguration : Profile
         //products
         CreateMap<Product, ProductResponse>().ReverseMap();
         CreateMap<Product, UnApproveProductResponse>().ReverseMap();
+        
+        //Category 
+        CreateMap<Category, CategoryResponse>().ReverseMap();
+        CreateMap<Category, UpdateCategoryRequest>().ReverseMap();
     }
 }

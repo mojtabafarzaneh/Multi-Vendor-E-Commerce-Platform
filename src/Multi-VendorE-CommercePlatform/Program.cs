@@ -87,12 +87,16 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+
 
 //managers implementation
 builder.Services.AddScoped<IAuthManager, AuthManager>();
 builder.Services.AddScoped<ICustomerManager, CustomerManager>();
 builder.Services.AddScoped<IVendorManager, VendorManager>();
 builder.Services.AddScoped<IAdminManager, AdminManager>();
+builder.Services.AddScoped<ICategoryManager, CategoryManager>();
+
 
 
 //helpers
