@@ -9,12 +9,14 @@ public class AdminManager : IAdminManager
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<AdminManager> _logger;
-
+    
     public AdminManager(ILogger<AdminManager> logger, ApplicationDbContext context)
     {
         _logger = logger;
         _context = context;
     }
+    
+    //TODO: ADD THE QUERYABLE FUNCTIONALITY.
 
     public async Task<bool> DoesAdminExist(Guid id)
     {

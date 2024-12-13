@@ -35,7 +35,7 @@ public class CategoryController: ControllerBase
         return Ok(category);
     }
 
-    [HttpGet(ApiEndpoints.Category.Create)]
+    [HttpPost(ApiEndpoints.Category.Create)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Authorize]
@@ -45,7 +45,7 @@ public class CategoryController: ControllerBase
         return Ok();
     }
 
-    [HttpGet(ApiEndpoints.Category.Update)]
+    [HttpPut(ApiEndpoints.Category.Update)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Authorize]
@@ -55,7 +55,7 @@ public class CategoryController: ControllerBase
         return Ok();
     }
 
-    [HttpGet(ApiEndpoints.Category.Delete)]
+    [HttpDelete(ApiEndpoints.Category.Delete)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [Authorize]

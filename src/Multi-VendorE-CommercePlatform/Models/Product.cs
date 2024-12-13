@@ -2,7 +2,7 @@
 
 public class Product
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; set; }= Guid.NewGuid();
     public Guid VendorId { get; set; }
     public Vendor Vendor { get; set; }
     public Guid CategoryId { get; set; }

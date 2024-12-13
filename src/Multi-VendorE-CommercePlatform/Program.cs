@@ -88,6 +88,7 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IVendorService, VendorService>();
 builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 
 //managers implementation
@@ -96,7 +97,7 @@ builder.Services.AddScoped<ICustomerManager, CustomerManager>();
 builder.Services.AddScoped<IVendorManager, VendorManager>();
 builder.Services.AddScoped<IAdminManager, AdminManager>();
 builder.Services.AddScoped<ICategoryManager, CategoryManager>();
-
+builder.Services.AddScoped<IProductManager, ProductManager>();
 
 
 //helpers

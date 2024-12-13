@@ -6,6 +6,9 @@ public interface IVendorManager
 {
     public Task Create(Vendor vendor);
     public Task<bool> DoesVendorExist(Vendor vendor);
+
+    public Task UpdateProductStock();
+    public Task UpdateProductPrice();
     public Task<bool> DoesVendorExist(Guid id);
     public Task<Vendor> GetVendorById(Guid id);
     public Task UpdateEmail(Guid id, string email);

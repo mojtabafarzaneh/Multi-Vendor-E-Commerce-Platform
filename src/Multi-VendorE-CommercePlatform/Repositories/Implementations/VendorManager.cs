@@ -37,6 +37,16 @@ public class VendorManager : IVendorManager
         return await _context.Vendors.AnyAsync(x => x.BusinessEmail == vendor.BusinessEmail);
     }
 
+    public Task UpdateProductStock()
+    {
+        throw new NotImplementedException();
+    }
+
+    public Task UpdateProductPrice()
+    {
+        throw new NotImplementedException();
+    }
+
     public async Task<bool> DoesVendorExist(Guid id)
     {
         return await _context.Vendors.AnyAsync(x => x.UserId == id);
