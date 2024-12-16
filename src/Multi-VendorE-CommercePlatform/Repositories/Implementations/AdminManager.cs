@@ -23,12 +23,24 @@ public class AdminManager : IAdminManager
         return await _context.Users.AnyAsync(x => x.Id == id);
     }
 
-    public async Task<List<Vendor>> UnapprovedVendors()
+    public async Task<(List<Vendor>, int)> UnapprovedVendors(
+        int page, int pageSize, string? search)
     {
-        var vendors = await _context.Vendors
-            .Where(x => x.Approved == false)
+        var query = _context.Vendors
+            .Where(x => x.Approved == false);
+        
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            query = query.Where(x=> x.BusinessName.Contains(search));
+        }
+        var totalCount = await query.CountAsync();
+
+        var vendors = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
             .ToListAsync();
-        return vendors;
+        
+        return (vendors, totalCount);
     }
 
     public async Task ChangeApprovedVendorsStatus(Guid id)
@@ -49,14 +61,24 @@ public class AdminManager : IAdminManager
     }
 
 
-    public async Task<List<Product>> UnapprovedProducts()
+    public async Task<(List<Product>, int)> UnapprovedProducts(
+        int page, int pageSize, string? search)
     {
         try
         {
-            var products = await _context.Products
-                .Where(x => x.IsApproved == false)
+            var query = _context.Products
+                .Where(x => x.IsApproved == false);
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                query = query.Where(x=> x.Name.Contains(search));
+            }
+            var totalCount = await query.CountAsync();
+            var products = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
-            return products;
+            
+            return (products, totalCount);
         }
         catch (Exception ex)
         {

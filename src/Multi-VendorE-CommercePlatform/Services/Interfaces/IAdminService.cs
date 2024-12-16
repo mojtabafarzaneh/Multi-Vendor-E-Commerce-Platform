@@ -5,8 +5,10 @@ namespace Multi_VendorE_CommercePlatform.Services.Interfaces;
 
 public interface IAdminService
 {
-    public Task<List<UnApproveVendorResponse>> GetAllUnapprovedVendors();
+    public Task<PagedUnApproveVendorResponse> GetAllUnapprovedVendors(
+        int page, int pageSize, string? search);
     public Task ApproveVendors(Guid id);
-    public Task<ICollection<UnApproveProductResponse>> GetAllUnapprovedProducts();
+    public Task<PagedUnapprovedProductResponse> GetAllUnapprovedProducts(
+        int page, int pageSize, string? search);
     public Task ApproveProducts(Guid id);
 }

@@ -29,14 +29,32 @@ public class AdminService : IAdminService
         _mapper = mapper;
     }
 
-    public async Task<List<UnApproveVendorResponse>> GetAllUnapprovedVendors()
+    public async Task<PagedUnApproveVendorResponse> GetAllUnapprovedVendors(
+        int page, int pageSize, string? search)
     {
         try
         {
-            var userId = UserId();
-            if (!await IsAdmin(userId)) throw new UnauthorizedAccessException("User is not a Admin.");
-            var vendors = await _adminManager.UnapprovedVendors();
-            return _mapper.Map<List<UnApproveVendorResponse>>(vendors);
+            var userId = _userHelper.UserId();
+            if (userId == null) throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
+
+            var isAdmin = _roleHelper.IsAdminUser();
+            if (!isAdmin || !await _adminManager.DoesAdminExist(userGuid))
+                throw new UnauthorizedAccessException("you are not administrator.");
+
+            var (vendors, totalCount) = await _adminManager
+                .UnapprovedVendors(page, pageSize, search);
+            var mappedVendors = _mapper.Map<List<UnApproveVendorResponse>>(vendors);
+
+            return new PagedUnApproveVendorResponse
+            {
+                Items = mappedVendors,
+                TotalCount = totalCount,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = (int) Math.Ceiling((double) totalCount / pageSize)
+            };
         }
         catch (Exception ex)
         {
@@ -49,8 +67,15 @@ public class AdminService : IAdminService
     {
         try
         {
-            var userId = UserId();
-            if (!await IsAdmin(userId)) throw new UnauthorizedAccessException("User is not a Admin.");
+            var userId = _userHelper.UserId();
+            if (userId == null) throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
+
+            var isAdmin = _roleHelper.IsAdminUser();
+            if (!isAdmin || !await _adminManager.DoesAdminExist(userGuid))
+                throw new UnauthorizedAccessException("you are not administrator.");
+
             await _adminManager.ChangeApprovedVendorsStatus(id);
         }
         catch (Exception ex)
@@ -60,18 +85,33 @@ public class AdminService : IAdminService
         }
     }
 
-    public async Task<ICollection<UnApproveProductResponse>> GetAllUnapprovedProducts()
+    public async Task<PagedUnapprovedProductResponse> GetAllUnapprovedProducts(
+        int page, int pageSize, string? search)
     {
         try
         {
-            var userId = UserId();
-            if (!await IsAdmin(userId)) throw new UnauthorizedAccessException("User is not a Admin.");
+            var userId = _userHelper.UserId();
+            if (userId == null) throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
 
-            var products = await _adminManager.UnapprovedProducts();
-            var response = _mapper
-                .Map<ICollection<UnApproveProductResponse>>(products);
+            var isAdmin = _roleHelper.IsAdminUser();
+            if (!isAdmin || !await _adminManager.DoesAdminExist(userGuid))
+                throw new UnauthorizedAccessException("you are not administrator.");
 
-            return response;
+            var (products,totalCount) = await _adminManager
+                .UnapprovedProducts(page, pageSize, search);
+            var mappedProduct = _mapper
+                .Map<List<UnApproveProductResponse>>(products);
+
+            return new PagedUnapprovedProductResponse
+            {
+                Items = mappedProduct,
+                TotalCount = totalCount,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = (int) Math.Ceiling((double) totalCount / pageSize)
+            };
         }
         catch (Exception ex)
         {
@@ -84,47 +124,16 @@ public class AdminService : IAdminService
     {
         try
         {
-            var userId = UserId();
-            if (!await IsAdmin(userId)) throw new UnauthorizedAccessException("User is not a Admin.");
-
-            await _adminManager.ChangeApprovedProductsStatus(id);
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-            throw;
-        }
-    }
-
-
-    private Guid UserId()
-    {
-        try
-        {
             var userId = _userHelper.UserId();
             if (userId == null) throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
 
-            if (!Guid.TryParse(userId, out var userGuid)) throw new ArgumentException("Invalid UserId format.");
-
-            return userGuid;
-        }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, ex.Message);
-            throw;
-        }
-    }
-
-    private async Task<bool> IsAdmin(Guid userId)
-    {
-        try
-        {
             var isAdmin = _roleHelper.IsAdminUser();
+            if (!isAdmin || !await _adminManager.DoesAdminExist(userGuid))
+                throw new UnauthorizedAccessException("you are not administrator.");
 
-            if (!isAdmin || !await _adminManager.DoesAdminExist(userId))
-                throw new UnauthorizedAccessException("User is not a Vendor.");
-
-            return isAdmin;
+            await _adminManager.ChangeApprovedProductsStatus(id);
         }
         catch (Exception ex)
         {
