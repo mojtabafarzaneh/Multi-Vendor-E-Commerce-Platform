@@ -69,8 +69,9 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task<PagedProductResponse> GetAllProducts(int page, int pageSize, string? search){
-        
+    public async Task<PagedProductResponse> GetAllProducts(
+        int page, int pageSize, string? search, bool isApproved)
+    {
         try
         {
             var userId = _userHelper.UserId();
@@ -81,12 +82,11 @@ public class ProductService : IProductService
 
             if (!isVendor || !await _productManager.DoesVendorExist(userGuid))
                 throw new UnauthorizedAccessException("User is not a Vendor.");
-            
+
             var vendorId = await _productManager.VendorId(userGuid);
 
             var (products, totalCount) = await _productManager
-                .GetAll(vendorId, page, pageSize, search);
-            
+                .GetAll(vendorId, page, pageSize, search, isApproved);
             var response = _mapper.Map<List<ProductResponse>>(products);
             return new PagedProductResponse
             {
@@ -103,6 +103,107 @@ public class ProductService : IProductService
             _logger.LogError(ex, ex.Message);
             throw;
         }
-        
+    }
+
+    public async Task<ProductResponse> GetProductById(Guid id)
+    {
+        try
+        {
+            var userId = _userHelper.UserId();
+            var isVendor = _roleHelper.IsVendorUser();
+            if (userId == null) throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
+
+            if (!isVendor || !await _productManager.DoesVendorExist(userGuid))
+                throw new UnauthorizedAccessException("User is not a Vendor.");
+            if (!await _productManager.DoesVendorExist(userGuid))
+            {
+                throw new ArgumentException("you are not the vendor.");
+            }
+
+            if (!await _productManager.IsApproved(id))
+            {
+                throw new ArgumentException("product is not approved.");
+            }
+            
+            var product = await _productManager.GetById(id);
+            var response = _mapper.Map<ProductResponse>(product);
+            return response;
+
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+    }
+
+    public async Task UpdateNameAndDescription(UpdateProductNameAndDescription request, Guid id)
+    {
+        try
+        {
+            var userId = _userHelper.UserId();
+            var isVendor = _roleHelper.IsVendorUser();
+            if (userId == null) throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
+
+            if (!isVendor || !await _productManager.DoesVendorExist(userGuid))
+                throw new UnauthorizedAccessException("User is not a Vendor.");
+            
+            if (!await _productManager.DoesVendorExist(userGuid))
+            {
+                throw new ArgumentException("you are not the vendor.");
+            }
+
+            if (id == Guid.Empty)
+            {
+                throw new ArgumentException("You have to enter the product ID.");
+            }
+
+            if (request.Name == null || request.Description == null)
+            {
+                throw new ArgumentException("You have to provide a name and a description.");
+            }
+            request.Id = id;
+            await _productManager.UpdateNameAndDescription(request);
+
+            
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+    }
+
+    public async Task RemoveProduct(Guid id)
+    {
+        try
+        {
+            var userId = _userHelper.UserId();
+            var isVendor = _roleHelper.IsVendorUser();
+            if (userId == null) throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
+
+            if (!isVendor || !await _productManager.DoesVendorExist(userGuid))
+                throw new UnauthorizedAccessException("User is not a Vendor.");
+            
+            if (!await _productManager.DoesVendorExist(userGuid))
+            {
+                throw new ArgumentException("you are not the vendor.");
+            }
+
+            await _productManager.Delete(id);
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
     }
 }

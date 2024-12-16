@@ -45,16 +45,20 @@ public class ProductManager : IProductManager
         }
     }
 
-    public async Task<(List<Product>, int)> GetAll(Guid vendorId, int page, int pageSize, string? searchString)
+    public async Task<(List<Product>, int)> GetAll(
+        Guid vendorId, int page, int pageSize, string? searchString, bool isApproved)
     {
         try
         {
             var query = _context.Products
-                .Where(x => x.VendorId == vendorId);
+                .Where(x => x.VendorId == vendorId)
+                .Where(x=>x.IsApproved == isApproved);
+            
             if (!string.IsNullOrEmpty(searchString))
             {
                 query = query.Where(x => x.Name.Contains(searchString)); 
             }
+            
             var totalCount = await query.CountAsync();
             var products = await query
                 .Skip((page - 1) * pageSize)
@@ -99,8 +103,17 @@ public class ProductManager : IProductManager
             {
                 throw new ArgumentException("Product not found");
             }
-            product.Name = update.Name;
-            product.Description = update.Description;
+
+            if (update.Name != null!)
+            {
+                product.Name = update.Name;   
+            }
+
+            if (update.Description != null!)
+            {
+                product.Description = update.Description;
+            }
+            
             await _context.SaveChangesAsync();
 
         }
@@ -171,6 +184,21 @@ public class ProductManager : IProductManager
         try
         {
             return await _context.Products.AnyAsync(x => x.Name == name);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+    }
+
+    public async Task Delete(Guid id)
+    {
+        try
+        {
+            var product = await GetById(id);
+            _context.Products.Remove(product);
+            await _context.SaveChangesAsync();
         }
         catch (Exception ex)
         {
