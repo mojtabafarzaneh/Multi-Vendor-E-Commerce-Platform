@@ -80,23 +80,38 @@ public class ProductService : IProductService
             if (!Guid.TryParse(userId, out var userGuid))
                 throw new ArgumentException("Invalid UserId format.");
 
-            if (!isVendor || !await _productManager.DoesVendorExist(userGuid))
-                throw new UnauthorizedAccessException("User is not a Vendor.");
+            if (!isVendor && !await _productManager.DoesUserExist(userGuid))
+            {
+                throw new UnauthorizedAccessException("you can not reach this endpoint");
+            }
 
-            var vendorId = await _productManager.VendorId(userGuid);
+            if (isVendor)
+            {
+                var vendorId = await _productManager.VendorId(userGuid);
 
-            var (products, totalCount) = await _productManager
-                .GetAll(vendorId, page, pageSize, search, isApproved);
-            var response = _mapper.Map<List<ProductResponse>>(products);
+                var (products, totalCount) = await _productManager
+                    .GetAll(vendorId, page, pageSize, search, isApproved);
+                var response = _mapper.Map<List<ProductResponse>>(products);
+                return new PagedProductResponse
+                {
+                    Items = response,
+                    TotalCount = totalCount,
+                    CurrentPage = page,
+                    PageSize = pageSize,
+                    TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
+                };
+            }
+            var (product, totalCounts) = await _productManager
+                .GetAll(page, pageSize, search);
+            var customerResponse = _mapper.Map<List<ProductResponse>>(product);
             return new PagedProductResponse
             {
-                Items = response,
-                TotalCount = totalCount,
+                Items = customerResponse,
+                TotalCount = totalCounts,
                 CurrentPage = page,
                 PageSize = pageSize,
-                TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
+                TotalPages = (int)Math.Ceiling(totalCounts/(double)pageSize)
             };
-
         }
         catch (Exception ex)
         {
@@ -110,13 +125,10 @@ public class ProductService : IProductService
         try
         {
             var userId = _userHelper.UserId();
-            var isVendor = _roleHelper.IsVendorUser();
             if (userId == null) throw new UnauthorizedAccessException();
             if (!Guid.TryParse(userId, out var userGuid))
                 throw new ArgumentException("Invalid UserId format.");
 
-            if (!isVendor || !await _productManager.DoesVendorExist(userGuid))
-                throw new UnauthorizedAccessException("User is not a Vendor.");
             if (!await _productManager.DoesVendorExist(userGuid))
             {
                 throw new ArgumentException("you are not the vendor.");

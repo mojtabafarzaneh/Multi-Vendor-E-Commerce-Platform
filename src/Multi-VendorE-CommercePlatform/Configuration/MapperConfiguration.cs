@@ -3,6 +3,7 @@ using Multi_VendorE_CommercePlatform.Contracts.Profiles;
 using Multi_VendorE_CommercePlatform.Contracts.Project;
 using Multi_VendorE_CommercePlatform.Models;
 using AutoMapper;
+using Multi_VendorE_CommercePlatform.Contracts.Cards;
 
 
 namespace Multi_VendorE_CommercePlatform.Configuration;
@@ -36,5 +37,11 @@ public class MapperConfiguration : Profile
         //Category 
         CreateMap<Category, CategoryResponse>().ReverseMap();
         CreateMap<Category, UpdateCategoryRequest>().ReverseMap();
+        
+        //Card
+        CreateMap<Card, CardResponse>().ReverseMap();
+        CreateMap<CardItem, CardItemResponse>().ReverseMap();
+        CreateMap<CardItem, CreateCardItemRequest>().ReverseMap();
+        CreateMap<CardItem, UpdateCardItem>().ReverseMap();
     }
 }

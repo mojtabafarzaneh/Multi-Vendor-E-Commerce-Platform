@@ -50,4 +50,17 @@ public class ApiEndpoints
         public const string Update = $"{Base}/{{id:guid}}";
         public const string Delete = $"{Base}/{{id:guid}}";
     }
+
+    public static class Card
+    {
+        private const string Base = $"{ApiBase}/card";
+        public const string Create = $"{Base}";
+        public const string CustomerCard = $"{Base}";
+        public const string CreateCardItem = $"{Base}/cardItem";
+        public const string Update = $"{Base}/{{id:guid}}";
+        public const string Delete = $"{Base}";
+        public const string GetCardItemById = $"{Base}/cardItem/{{id:guid}}";
+        public const string DeleteCardItem = $"{Base}/cardItem/{{id:guid}}";
+        public const string GetAll = $"{Base}";
+    }
 }

@@ -10,6 +10,7 @@ public class ProductManager : IProductManager
 {
     private readonly ApplicationDbContext _context;
     private readonly ILogger<ProductManager> _logger;
+    private IProductManager _iProductManagerImplementation;
 
     public ProductManager(ApplicationDbContext context,
         ILogger<ProductManager> logger)
@@ -73,6 +74,32 @@ public class ProductManager : IProductManager
         }
     }
 
+    public async Task<(List<Product>, int)> GetAll(int page, int pageSize, string? search)
+    {
+        try
+        {
+            var query = _context.Products.
+                    Where(x=> x.IsApproved == true);
+            
+            if (!string.IsNullOrEmpty(search))
+            {
+                query = query.Where(x => x.Name.Contains(search)); 
+            }
+            var totalCount = await query.CountAsync();
+            var products = await query
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+            return (products, totalCount);
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+    }
+
     public async Task<Product> GetById(Guid id)
     {
         try
@@ -91,6 +118,11 @@ public class ProductManager : IProductManager
             _logger.LogError(ex, ex.Message);
             throw;
         }
+    }
+
+    public async Task<bool> DoesUserExist(Guid id)
+    {
+        return await _context.Customers.AnyAsync(x => x.UserId == id);
     }
 
     public async Task UpdateNameAndDescription(UpdateProductNameAndDescription update)
