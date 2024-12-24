@@ -271,8 +271,58 @@ public class CardService: ICardService
         }
     }
 
-    public Task UpdateCardItem(UpdateCardItem cardItem)
+    public async Task CheckOutCard()
     {
-        throw new NotImplementedException();
+        try
+        {
+            var userId = _userHelper.UserId();
+            if (userId == null) throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
+            if (!await _cardManager.DoesUserExist(userGuid))
+            {
+                throw new UnauthorizedAccessException("you can not reach this endpoint");
+            }
+            var customer = await _cardManager.CustomerId(userGuid);
+            if (customer == null)
+            {
+                throw new ArgumentException("Invalid Customer Id.");
+            }
+
+            await _cardManager.Checkout(customer.Id);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+    }
+
+    public async Task UpdateCardItem(UpdateCardItem cardItem)
+    {
+        try
+        {
+            var userId = _userHelper.UserId();
+            if (userId == null) throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
+            if (!await _cardManager.DoesUserExist(userGuid))
+            {
+                throw new UnauthorizedAccessException("you can not reach this endpoint");
+            }
+            var customer = await _cardManager.CustomerId(userGuid);
+            if (customer == null)
+            {
+                throw new ArgumentException("Invalid Customer Id.");
+            }
+
+            await _cardManager.UpdateQuantity(cardItem);
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
     }
 }

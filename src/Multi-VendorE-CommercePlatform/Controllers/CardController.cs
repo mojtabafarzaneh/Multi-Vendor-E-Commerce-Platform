@@ -98,4 +98,31 @@ public class CardController:ControllerBase
         await _cardService.RemoveCardItemById(id);
         return Ok();
     }
+
+    [HttpGet(ApiEndpoints.Card.Checkout)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [Authorize]
+    public async Task<IActionResult> Checkout()
+    {
+        await _cardService.CheckOutCard();
+        return Ok();
+    }
+
+    [HttpPut(ApiEndpoints.Card.Update)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [Authorize]
+    public async Task<IActionResult> UpdateCardItem([FromBody] UpdateCardItem request)
+    {
+        if (request.Quantity <= 0 || request.Quantity > 25)
+        {
+            return BadRequest("Quantity must be between 0 and 25");
+        }
+
+        if (request.CardItemId == Guid.Empty)
+        {
+            return BadRequest("cardItem id must be provided");
+        }
+        await _cardService.UpdateCardItem(request);
+        return Ok();
+    }
 }

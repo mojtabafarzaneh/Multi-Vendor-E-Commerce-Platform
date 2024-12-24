@@ -57,10 +57,11 @@ public class ApiEndpoints
         public const string Create = $"{Base}";
         public const string CustomerCard = $"{Base}";
         public const string CreateCardItem = $"{Base}/cardItem";
-        public const string Update = $"{Base}/{{id:guid}}";
+        public const string Update = $"{Base}/cardItem";
         public const string Delete = $"{Base}";
         public const string GetCardItemById = $"{Base}/cardItem/{{id:guid}}";
         public const string DeleteCardItem = $"{Base}/cardItem/{{id:guid}}";
         public const string GetAll = $"{Base}";
+        public const string Checkout = $"{Base}/checkout";
     }
 }

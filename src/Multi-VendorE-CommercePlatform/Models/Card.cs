@@ -5,6 +5,7 @@ public class Card
     public Guid Id { get; set; }
     public Guid CustomerId { get; set; }
     public Customer Customer { get; set; }
+    public bool IsPaid { get; set; } = false;
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 

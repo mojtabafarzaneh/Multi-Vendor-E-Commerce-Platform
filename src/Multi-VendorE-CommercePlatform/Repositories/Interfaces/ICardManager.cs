@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Multi_VendorE_CommercePlatform.Contracts.Cards;
 using Multi_VendorE_CommercePlatform.Models;
 
 namespace Multi_VendorE_CommercePlatform.Repositories.Interfaces;
@@ -16,6 +17,8 @@ public interface ICardManager
     public Task<bool> DoesCardItemExist(Guid productId);
     public Task Delete(Guid customerId);
     public Task CreateCardItem(CardItem cardItem, Product product);
+    public Task Checkout(Guid customerId);
+    public Task UpdateQuantity(UpdateCardItem update);
     public Task<CardItem> GetCardItemById(Guid cardItemId);
     public Task DeleteCardItem(Guid cardItemId);
 }

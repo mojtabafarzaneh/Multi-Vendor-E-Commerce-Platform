@@ -1,4 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Multi_VendorE_CommercePlatform.Contracts.Cards;
 using Multi_VendorE_CommercePlatform.Contracts.Project;
 using Multi_VendorE_CommercePlatform.Models;
 using Multi_VendorE_CommercePlatform.Models.Entities;
@@ -48,9 +50,59 @@ public class CardManager:ICardManager
 
     public async Task<bool> DoesCustomerHasCard(Guid userId)
     {
-        return await _context.Cards.AnyAsync(x => x.CustomerId == userId);
+        return await _context.Cards.Where(x => x.CustomerId == userId)
+            .AnyAsync(x => x.IsPaid == true);
     }
-    
+
+    public async Task Checkout(Guid customerId)
+    {
+        try
+        {
+            var card = await _context.Cards
+                .Where(x => x.CustomerId == customerId)
+                .FirstOrDefaultAsync();
+            if (card == null)
+            {
+                throw new ArgumentException("the card does not exist.");
+            }
+
+            card.IsPaid = true;
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+    }
+
+    public async Task UpdateQuantity(UpdateCardItem update)
+    {
+        try
+        {
+            var cardItem = await _context.CardItems
+                .Where(x => x.Id == update.CardItemId)
+                .FirstOrDefaultAsync();
+            if (cardItem == null)
+            {
+                throw new ArgumentException("the cardItem does not exist.");
+            }
+            var product = await GetProductInfo(cardItem.ProductId);
+            if (product == null)
+            {
+                throw new ArgumentException("the product does not exist.");
+            }
+            cardItem.Quantity += update.Quantity;
+            product.Stock -= update.Quantity;
+            await _context.SaveChangesAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
+    }
+
     public async Task<Customer> CustomerId(Guid userId)
     {
         var customerId = await _context.Customers

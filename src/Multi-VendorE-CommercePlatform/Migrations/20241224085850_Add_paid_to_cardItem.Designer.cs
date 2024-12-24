@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Multi_VendorE_CommercePlatform.Models.Entities;
 
@@ -11,9 +12,11 @@ using Multi_VendorE_CommercePlatform.Models.Entities;
 namespace Multi_VendorE_CommercePlatform.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241224085850_Add_paid_to_cardItem")]
+    partial class Add_paid_to_cardItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -137,9 +140,6 @@ namespace Multi_VendorE_CommercePlatform.Migrations
                     b.Property<Guid>("CustomerId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<bool>("IsPaid")
-                        .HasColumnType("bit");
-
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime");
 
@@ -158,6 +158,9 @@ namespace Multi_VendorE_CommercePlatform.Migrations
 
                     b.Property<Guid>("CardId")
                         .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("DoesPaid")
+                        .HasColumnType("bit");
 
                     b.Property<decimal>("Price")
                         .HasColumnType("decimal(18, 2)");
@@ -419,19 +422,19 @@ namespace Multi_VendorE_CommercePlatform.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("7f71c6c6-05a5-4141-aa66-2e8cd4cd7270"),
+                            Id = new Guid("3972e673-d2f8-40b5-ba06-b05adeef0b6c"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("9ba560c1-500c-4f2c-9890-36ac2971fab5"),
+                            Id = new Guid("c4361eb1-38eb-4956-b4ac-0b3c56b81bf0"),
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         },
                         new
                         {
-                            Id = new Guid("15f7a8b1-70da-4c3c-8531-359c7256ab67"),
+                            Id = new Guid("de9d22d1-3a34-4e0e-b24d-020b37c4e270"),
                             Name = "Vendor",
                             NormalizedName = "VENDOR"
                         });

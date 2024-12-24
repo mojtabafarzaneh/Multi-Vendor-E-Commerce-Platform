@@ -10,6 +10,7 @@ public interface ICardService
     //admin public Task GetAllCards();
     public Task<PagedCardResponse> CustomerCards(int page, int pageSize);
     public Task<CardItemResponse> GetCardItemById(Guid cardItemId);
+    public Task CheckOutCard();
     public Task CreateCardItem(CreateCardItemRequest card);
     public Task RemoveCard();
     public Task RemoveCardItemById(Guid cardItemId);
