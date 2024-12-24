@@ -41,6 +41,12 @@ public class ApiEndpoints
         public const string Delete = $"{Base}/{{id:guid}}";
     }
 
+    public static class Profile
+    {
+        private const string Base = $"{ApiBase}/profile";
+        public const string ProfilePage = $"{Base}/";
+    }
+
     public static class Product
     {
         private const string Base = $"{ApiBase}/product";

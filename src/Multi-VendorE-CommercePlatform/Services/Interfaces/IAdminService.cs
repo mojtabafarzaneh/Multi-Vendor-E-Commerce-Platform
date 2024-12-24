@@ -5,6 +5,7 @@ namespace Multi_VendorE_CommercePlatform.Services.Interfaces;
 
 public interface IAdminService
 {
+    //TODO:ALL Customers, ALL Vendors, ALL Products, ALL Orders
     public Task<PagedUnApproveVendorResponse> GetAllUnapprovedVendors(
         int page, int pageSize, string? search);
     public Task ApproveVendors(Guid id);

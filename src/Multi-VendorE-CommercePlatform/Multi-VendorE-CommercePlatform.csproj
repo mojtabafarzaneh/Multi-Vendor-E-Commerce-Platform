@@ -24,6 +24,7 @@
     <ItemGroup>
         <Compile Remove="Contracts\Responses\**"/>
         <Compile Remove="Contracts\Requests\**"/>
+        <Compile Remove="Contracts\Order\OrderItemResponse.c.cs" />
     </ItemGroup>
 
     <ItemGroup>
