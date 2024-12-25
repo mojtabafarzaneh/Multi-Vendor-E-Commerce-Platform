@@ -70,4 +70,12 @@ public class ApiEndpoints
         public const string GetAll = $"{Base}";
         public const string Checkout = $"{Base}/checkout";
     }
+
+    public static class Order
+    {
+        private const string Base = $"{ApiBase}/order";
+        public const string GetOrder = $"{Base}";
+        public const string OrderItemPage = $"{Base}/orderItem/{{id:guid}}";
+        public const string UpdateStatus = $"{Base}";
+    }
 }

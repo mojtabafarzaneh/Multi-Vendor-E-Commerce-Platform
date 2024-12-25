@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Multi_VendorE_CommercePlatform.Contracts.Order;
 using Multi_VendorE_CommercePlatform.Models;
 using Multi_VendorE_CommercePlatform.Models.Entities;
 using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
@@ -32,30 +33,47 @@ public class OrderManager: IOrderManager
         }
         return customer;
     }
-    
 
-    public async Task Create(Order order, List<OrderItem> orderItem)
+    public async Task<Order> GetOrder(Guid customerId)
     {
-        await using var transaction = await _context.Database.BeginTransactionAsync();
-        try
+        var order = await _context.Orders
+            .FirstOrDefaultAsync(x=> x.CustomerId == customerId);
+        if (order == null)
         {
-            var result = await _context.Orders.AddAsync(order);
-            await _context.SaveChangesAsync();
-            foreach (var or in orderItem)
-            {
-                or.OrderId = result.Entity.Id;
-                await _context.OrderItems.AddAsync(or);
-                await _context.SaveChangesAsync();
-            }
-            await transaction.CommitAsync();
-
+            return null!;
         }
-        catch (Exception ex)
+        return order;
+    }
+
+    public async Task<OrderItem> GetOrderItem(Guid orderItemId)
+    {
+        var orderItem = await _context.OrderItems
+            .FirstOrDefaultAsync(x=> x.Id == orderItemId);
+        if (orderItem == null)
         {
-            await transaction.RollbackAsync();
-            _logger.LogError(ex, ex.Message);
-            throw;
+            return null!;
         }
+        return orderItem;
+    }
 
+    public async Task<List<Order>> GetOrders(Guid customerId)
+    {
+        var order = await _context.Orders
+            .Where(x => x.CustomerId == customerId)
+            .ToListAsync();
+        if (!order.Any())
+        {
+            return null!;
+        }
+        return order;
+    }
+
+    public async Task UpdateStatus(UpdateOrderStatus request)
+    {
+        var order = await _context.Orders
+            .FirstOrDefaultAsync(x=> x.Id == request.OrderId);
+        if (order != null)
+            order.OrderStatus = request.OrderStatus;
+        await _context.SaveChangesAsync();
     }
 }

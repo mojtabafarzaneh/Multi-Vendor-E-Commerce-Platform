@@ -28,22 +28,92 @@ public class OrderService: IOrderService
 
     public async Task<OrderItemResponse> GetOrderItem(Guid orderItemId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var userId = _userHelper.UserId();
+            if (userId == null) throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
+            if (!await _orderManager.DoesUserExist(userGuid))
+            {
+                throw new UnauthorizedAccessException("you can not reach this endpoint");
+            }
+            var customer = await _orderManager.GetUser(userGuid);
+            var order = await _orderManager.GetOrder(customer.Id);
+            if (order == null)
+            {
+                throw new ArgumentException("There are no orders for this user.");
+            }
+            var orderItem = await _orderManager
+                .GetOrderItem(orderItemId);
+            if (orderItem == null)
+            {
+                throw new ArgumentException("Invalid orderItemId.");
+            }
+
+            if (order.Id != orderItem.OrderId)
+            {
+                throw new ArgumentException("The orderId does not match the orderItemId.");
+            }
+
+            var mappedResponse = _mapper.Map<OrderItemResponse>(orderItem);
+            mappedResponse.TotalPrice = orderItem.Price * orderItem.Quantity;
+            return mappedResponse;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
     }
 
     public async Task<PagedOrderResponse> GetAllOrders(int page, int pageSize, string search)
-    {
+    {//vendors
         throw new NotImplementedException();
     }
 
-    public async Task<OrderResponse> GetOrder(Guid orderId)
+    public async Task<List<OrderResponse>> GetOrder()
     {
-        throw new NotImplementedException();
+        try
+        {
+            var userId = _userHelper.UserId();
+            if (userId == null) throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
+            if (!await _orderManager.DoesUserExist(userGuid))
+            {
+                throw new UnauthorizedAccessException("you can not reach this endpoint");
+            }
+
+            var customer = await _orderManager.GetUser(userGuid);
+            var order = await _orderManager.GetOrders(customer.Id);
+            if (order == null)
+            {
+                throw new ArgumentException("There are no orders for this user.");
+            }
+            var mappedOrder = _mapper.Map<List<OrderResponse>>(order);
+            return mappedOrder;
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
     }
 
-    public async Task UpdateOrderStatus()
+    public async Task UpdateOrderStatus(UpdateOrderStatus request)
     {
-        throw new NotImplementedException();
+        var userId = _userHelper.UserId();
+        var isVendor = _roleHelper.IsVendorUser();
+        if (userId == null) throw new UnauthorizedAccessException();
+        if (!Guid.TryParse(userId, out var userGuid))
+            throw new ArgumentException("Invalid UserId format.");
+        if (!isVendor)
+        {
+            throw new UnauthorizedAccessException("you can not reach this endpoint");
+        }
+        await _orderManager.UpdateStatus(request);
+
     }
 
     public async Task RemoveOrder()
