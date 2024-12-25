@@ -288,8 +288,29 @@ public class CardService: ICardService
             {
                 throw new ArgumentException("Invalid Customer Id.");
             }
+            var card = await _cardManager.GetCard(customer.Id);
+            var cardItems = await _cardManager.GetCardItem(card.Id);
+            var order = new Order
+            {
+                OrderStatus = Order.Status.Pending,
+                CustomerId = customer.Id,
+            };
+            var orderItems = new List<OrderItem>();
+            foreach (var cardItem in cardItems)
+            {
+                if (await _cardManager.DoesProductExist(cardItem.ProductId))
+                {
+                    throw new ArgumentException("this product has already been added to your card");
+                }
+                orderItems.Add(new OrderItem
+                {
+                    ProductId = cardItem.ProductId,
+                    Quantity = cardItem.Quantity,
+                    Price = cardItem.Price
+                });
+            }
 
-            await _cardManager.Checkout(customer.Id);
+            await _cardManager.Checkout(customer.Id, order, orderItems);
         }
         catch (Exception ex)
         {

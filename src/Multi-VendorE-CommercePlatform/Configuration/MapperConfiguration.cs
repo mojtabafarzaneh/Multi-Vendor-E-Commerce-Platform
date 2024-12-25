@@ -47,8 +47,11 @@ public class MapperConfiguration : Profile
         CreateMap<CardItem, CreateCardItemRequest>().ReverseMap();
         CreateMap<CardItem, UpdateCardItem>().ReverseMap();
         
-        //CardItem
+        //Order
+        CreateMap<Order, UpdateOrderStatus>().ReverseMap();
         CreateMap<Order, OrderResponse>().ReverseMap();
         CreateMap<OrderItem, OrderItemResponse>().ReverseMap();
+        CreateMap<Order, SingleOrderResponse>().ReverseMap();
+
     }
 }

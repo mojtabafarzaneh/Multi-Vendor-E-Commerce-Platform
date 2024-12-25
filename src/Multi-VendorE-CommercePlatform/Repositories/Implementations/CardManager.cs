@@ -23,6 +23,28 @@ public class CardManager:ICardManager
     {
         return await _context.Customers.AnyAsync(x => x.UserId == userId);
     }
+    public async Task<Card> GetCard(Guid customerId)
+    {
+        var card = await _context.Cards
+            .FirstOrDefaultAsync(x=> x.CustomerId == customerId);
+        if (card == null)
+        {
+            return null!;
+        }
+        return card;
+    }
+
+    public async Task<List<CardItem>> GetCardItem(Guid cardId)
+    {
+        var cardItem = await _context.CardItems
+            .Where(x=> x.CardId == cardId)
+            .ToListAsync();
+        if (!cardItem.Any())
+        {
+            return null!;
+        }
+        return cardItem;
+    }
 
     public async Task Create(Card card, CardItem cardItem, Product product)
     {
@@ -54,8 +76,9 @@ public class CardManager:ICardManager
             .AnyAsync(x => x.IsPaid == true);
     }
 
-    public async Task Checkout(Guid customerId)
+    public async Task Checkout(Guid customerId, Order order, List<OrderItem> orderItem)
     {
+        await using var transaction = await _context.Database.BeginTransactionAsync();
         try
         {
             var card = await _context.Cards
@@ -68,9 +91,19 @@ public class CardManager:ICardManager
 
             card.IsPaid = true;
             await _context.SaveChangesAsync();
+            var orderResult = await _context.Orders.AddAsync(order);
+            await _context.SaveChangesAsync();
+            foreach (var or in orderItem)
+            {
+                or.OrderId = orderResult.Entity.Id;
+                await _context.OrderItems.AddAsync(or);
+            }
+            await _context.SaveChangesAsync();
+            await transaction.CommitAsync();
         }
         catch (Exception ex)
         {
+            await transaction.RollbackAsync();
             _logger.LogError(ex, ex.Message);
             throw;
         }
@@ -203,6 +236,11 @@ public class CardManager:ICardManager
             _logger.LogError(ex, ex.Message);
             throw;
         }
+    }
+
+    public async Task<bool> DoesProductExist(Guid productId)
+    {
+        return await _context.OrderItems.AnyAsync(x => x.ProductId == productId);
     }
 
     public async Task Delete(Guid customerId)

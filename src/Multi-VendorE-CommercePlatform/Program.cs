@@ -91,6 +91,7 @@ builder.Services.AddScoped<ICategoryService, CategoryService>();
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<ICardService, CardService>();
+builder.Services.AddScoped<IOrderManager, OrderManager>();
 
 //managers implementation
 builder.Services.AddScoped<IAuthManager, AuthManager>();
@@ -101,6 +102,7 @@ builder.Services.AddScoped<ICategoryManager, CategoryManager>();
 builder.Services.AddScoped<IProductManager, ProductManager>();
 builder.Services.AddScoped<IOrderManager, OrderManager>();
 builder.Services.AddScoped<ICardManager, CardManager>();
+builder.Services.AddScoped<IOrderService, OrderService>();
 
 
 //helpers

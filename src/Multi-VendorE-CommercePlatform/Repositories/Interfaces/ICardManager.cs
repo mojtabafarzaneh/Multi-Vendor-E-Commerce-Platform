@@ -17,8 +17,12 @@ public interface ICardManager
     public Task<bool> DoesCardItemExist(Guid productId);
     public Task Delete(Guid customerId);
     public Task CreateCardItem(CardItem cardItem, Product product);
-    public Task Checkout(Guid customerId);
+    public Task Checkout(Guid customerId, Order order, List<OrderItem> orderItem);
     public Task UpdateQuantity(UpdateCardItem update);
     public Task<CardItem> GetCardItemById(Guid cardItemId);
+    public Task<bool> DoesProductExist(Guid productId);
     public Task DeleteCardItem(Guid cardItemId);
+    public Task<Card> GetCard(Guid customerId);
+    public Task<List<CardItem>> GetCardItem(Guid cardId);
+
 }
