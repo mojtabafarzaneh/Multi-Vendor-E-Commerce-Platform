@@ -15,9 +15,44 @@ public class AdminManager : IAdminManager
         _logger = logger;
         _context = context;
     }
-    
-    //TODO: ADD THE QUERYABLE FUNCTIONALITY.
 
+    public async Task<(List<Product>, int)> GetProducts(
+        int page, int pageSize, string? search)
+    {
+        var query = _context.Products.AsQueryable();
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            query = query.Where(x=> x.Name.Contains(search));
+        }
+        var totalCount = await query.CountAsync();
+        var product = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+        if (!product.Any())
+        {
+            return (null!, totalCount);
+        }
+        return (product, totalCount);
+    }
+
+    public async Task<List<Vendor>> GetVendors(
+        int page, int pageSize)
+    {
+        var query = _context
+            .Vendors.
+            Include(x=> x.Products);
+        var totalCount = await query.CountAsync();
+        var vendors = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+        if (!vendors.Any())
+        {
+            return null!;
+        }
+        return vendors;
+    }
     public async Task<bool> DoesAdminExist(Guid id)
     {
         return await _context.Users.AnyAsync(x => x.Id == id);
@@ -47,7 +82,8 @@ public class AdminManager : IAdminManager
     {
         try
         {
-            var vendor = await _context.Vendors.FirstOrDefaultAsync(x => x.Id == id);
+            var vendor = await _context.Vendors
+                .FirstOrDefaultAsync(x => x.Id == id);
             if (vendor == null) throw new ArgumentException("Invalid vendor!");
 
             vendor.Approved = true;
@@ -100,5 +136,42 @@ public class AdminManager : IAdminManager
             _logger.LogError(ex, ex.Message);
             throw;
         }
+        
+    }
+    public async Task<List<Customer>> GetCustomers(
+        int page, int pageSize)
+    {
+        var query = _context
+            .Customers
+            .Include(x=>
+                x.Cards)
+            .Include(x=> x.Orders);
+        var customers = await 
+            query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+        if (!customers.Any())
+        {
+            return null!;
+        }
+        return customers;
+    }
+
+    public async Task<List<Order>> GetOrders(
+        int page, int pageSize)
+    {
+        var query =  _context.Orders
+            .Include(x => x.OrderItems);
+        var orders = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+        if (!orders.Any())
+        {
+            return null!;
+        }
+
+        return orders;
     }
 }

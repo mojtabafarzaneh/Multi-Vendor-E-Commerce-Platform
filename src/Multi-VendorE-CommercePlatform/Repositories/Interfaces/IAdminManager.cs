@@ -11,4 +11,14 @@ public interface IAdminManager
     public Task<(List<Product>, int)> UnapprovedProducts(
         int page, int pageSize, string? search);
     public Task ChangeApprovedProductsStatus(Guid id);
+    public Task<(List<Product>, int)> GetProducts(
+        int page, int pageSize, string? search);
+
+    public Task<List<Vendor>> GetVendors(
+        int page, int pageSize);
+
+    public Task<List<Customer>> GetCustomers(
+        int page, int pageSize);
+    public Task<List<Order>> GetOrders(
+        int page, int pageSize);
 }

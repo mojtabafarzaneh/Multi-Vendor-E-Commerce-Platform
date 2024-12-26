@@ -25,10 +25,14 @@ public class ApiEndpoints
     public static class Admin
     {
         private const string Base = $"{ApiBase}/admin";
-        public const string UnApproveVendors = $"{Base}/vendor";
+        public const string UnApproveVendors = $"{Base}/vendor/unapprove";
         public const string ChangeVendorStatus = $"{Base}/vendor/status/{{id:guid}}";
-        public const string ChangeProductStatus = $"{Base}/vendor/product/status/{{id:guid}}";
-        public const string UnApproveProducts = $"{Base}/vendor/products";
+        public const string ChangeProductStatus = $"{Base}/product/status/{{id:guid}}";
+        public const string UnApproveProducts = $"{Base}/products/unapprove";
+        public const string AllVendors = $"{Base}/vendor";
+        public const string AllProducts = $"{Base}/product";
+        public const string AllCustomers = $"{Base}/customer";
+        public const string AllOrders = $"{Base}/order";
     }
 
     public static class Category
