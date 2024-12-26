@@ -11,5 +11,11 @@ public interface IOrderManager
     public Task<List<Order>> GetOrders(Guid customerId);
     public Task UpdateStatus(UpdateOrderStatus request);
     public Task<OrderItem> GetOrderItem(Guid customerId);
+    public Task<(List<OrderItem>, int)> GetOrderItem(
+        Guid orderId, int page, int pageSize);
+    public Task Remove(Guid orderId);
+    public Task<Vendor> GetVendor(Guid userGuid);
+    public Task<Product> GetProduct(Guid vendorId);
+    public Task<List<Order>> GetAllOrders();
 
 }

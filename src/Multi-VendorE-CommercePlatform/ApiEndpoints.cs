@@ -77,5 +77,7 @@ public class ApiEndpoints
         public const string GetOrder = $"{Base}";
         public const string OrderItemPage = $"{Base}/orderItem/{{id:guid}}";
         public const string UpdateStatus = $"{Base}";
+        public const string DeleteOrder = $"{Base}/{{id:guid}}";
+        public const string GetAllOrders = $"{Base}/vendor";
     }
 }

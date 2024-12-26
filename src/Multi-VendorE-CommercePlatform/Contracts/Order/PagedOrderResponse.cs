@@ -1,9 +1,10 @@
+using Multi_VendorE_CommercePlatform.Contracts.Cards;
+
 namespace Multi_VendorE_CommercePlatform.Contracts.Order;
 
 public class PagedOrderResponse
 {
-    public OrderResponse Order { get; set; }
-    public List<OrderItemResponse> Items { get; set; }
+    public List<SingleOrderResponse> Order { get; set; }
     public decimal TotalPrice { get; set; }
     public int TotalQuantity { get; set; }
     public int CurrentPage { get; set; }

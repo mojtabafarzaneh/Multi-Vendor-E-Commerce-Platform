@@ -76,4 +76,68 @@ public class OrderManager: IOrderManager
             order.OrderStatus = request.OrderStatus;
         await _context.SaveChangesAsync();
     }
+
+    public async Task Remove(Guid orderId)
+    {
+        var order = await _context.Orders
+            .FirstOrDefaultAsync(x=> x.Id == orderId);
+        if (order == null)
+        {
+            throw new ArgumentException("Order not found");
+        }
+        _context.Orders.Remove(order);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<Vendor> GetVendor(Guid userId)
+    {
+        var vendor = await  _context.Vendors
+            .FirstOrDefaultAsync(x=> x.UserId == userId);
+        if (vendor == null)
+        {
+            return null!;
+        }
+        return vendor;
+    }
+
+    public async Task<Product> GetProduct(Guid vendorId)
+    {
+        var product = await _context.Products
+            .FirstOrDefaultAsync(x=> x.VendorId == vendorId);
+        if (product == null)
+        {
+            return null!;
+        }
+        return product;
+    }
+
+    public async Task<List<Order>> GetAllOrders()
+    {
+        var orders = await _context.Orders
+            .ToListAsync();
+        if (!orders.Any())
+        {
+            return null!;
+        }
+        return orders;
+    }
+
+    public async Task<(List<OrderItem>, int)> GetOrderItem(
+        Guid orderId, int page, int pageSize)
+    {
+        var query = _context.OrderItems
+            .Where(oi => oi.OrderId == orderId);
+        
+        var totalCount = await query.CountAsync();
+        var orderItems = await query
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+        
+        if (!query.Any())
+        {
+            return (null!, 0);
+        }
+        return (orderItems, totalCount);
+    }
 }

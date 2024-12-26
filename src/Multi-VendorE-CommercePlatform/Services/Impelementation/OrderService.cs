@@ -1,4 +1,5 @@
 using AutoMapper;
+using Multi_VendorE_CommercePlatform.Contracts.Cards;
 using Multi_VendorE_CommercePlatform.Contracts.Order;
 using Multi_VendorE_CommercePlatform.Helpers;
 using Multi_VendorE_CommercePlatform.Models;
@@ -67,9 +68,62 @@ public class OrderService: IOrderService
         }
     }
 
-    public async Task<PagedOrderResponse> GetAllOrders(int page, int pageSize, string search)
-    {//vendors
-        throw new NotImplementedException();
+    public async Task<PagedOrderResponse> GetAllOrders(
+        int page, int pageSize)
+    {
+        try
+        {
+            var userId = _userHelper.UserId();
+            var isVendor = _roleHelper.IsVendorUser();
+            if (userId == null) throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
+            if (!isVendor)
+            {
+                throw new UnauthorizedAccessException("you can not reach this endpoint");
+            }
+
+            var orders = await _orderManager.GetAllOrders();
+            var pagedOrderResponses = new List<SingleOrderResponse>();
+            decimal totalPrice = 0;
+            int totalQuantity = 0;
+
+            foreach (var order in orders)
+            {
+                var (oi, totalCount) = await _orderManager
+                    .GetOrderItem(order.Id, page, pageSize);
+                if (!oi.Any()) continue;
+                
+                var mappedOrder = _mapper.Map <SingleOrderResponse>(order);
+                var mappedOrderItems = _mapper.Map <List<OrderItemResponse>>(oi);
+                foreach (var oiTotalPrice in mappedOrderItems)
+                {
+                    oiTotalPrice.TotalPrice = oiTotalPrice.Price * oiTotalPrice.Quantity;
+                    totalPrice += oiTotalPrice.TotalPrice;
+                    totalQuantity += oiTotalPrice.Quantity;
+                }
+
+                mappedOrder.Items = mappedOrderItems;
+
+                pagedOrderResponses.Add(mappedOrder);
+            }
+
+            return new PagedOrderResponse
+            {
+                Order = pagedOrderResponses,
+                TotalPrice = totalPrice,
+                TotalQuantity = totalQuantity,
+                CurrentPage = page,
+                PageSize = pageSize,
+                TotalPages = (int)Math.Ceiling((decimal)totalQuantity / pageSize)
+            };
+
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
     }
 
     public async Task<List<OrderResponse>> GetOrder()
@@ -103,21 +157,48 @@ public class OrderService: IOrderService
 
     public async Task UpdateOrderStatus(UpdateOrderStatus request)
     {
-        var userId = _userHelper.UserId();
-        var isVendor = _roleHelper.IsVendorUser();
-        if (userId == null) throw new UnauthorizedAccessException();
-        if (!Guid.TryParse(userId, out var userGuid))
-            throw new ArgumentException("Invalid UserId format.");
-        if (!isVendor)
+        try
         {
-            throw new UnauthorizedAccessException("you can not reach this endpoint");
+            var userId = _userHelper.UserId();
+            var isVendor = _roleHelper.IsVendorUser();
+            if (userId == null) throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
+            if (!isVendor)
+            {
+                throw new UnauthorizedAccessException("you can not reach this endpoint");
+            }
+
+            await _orderManager.UpdateStatus(request);
         }
-        await _orderManager.UpdateStatus(request);
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
 
     }
 
-    public async Task RemoveOrder()
+    public async Task RemoveOrder(Guid orderId)
     {
-        throw new NotImplementedException();
+        try
+        {
+            var userId = _userHelper.UserId();
+            var isVendor = _roleHelper.IsVendorUser();
+            if (userId == null) throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
+            if (!isVendor)
+            {
+                throw new UnauthorizedAccessException("you can not reach this endpoint");
+            }
+
+            await _orderManager.Remove(orderId);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+            throw;
+        }
     }
 }
