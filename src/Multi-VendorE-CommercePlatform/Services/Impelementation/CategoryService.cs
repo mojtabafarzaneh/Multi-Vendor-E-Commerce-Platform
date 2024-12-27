@@ -39,7 +39,8 @@ public class CategoryService : ICategoryService
             var isAdmin = _roleHelper.IsAdminUser();
             var userId = _userHelper.UserId();
             if (userId == null) throw new UnauthorizedAccessException();
-            if (!Guid.TryParse(userId, out var userGuid)) throw new ArgumentException("Invalid UserId format.");
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
 
             if (!isAdmin || !await _adminManager.DoesAdminExist(userGuid))
                 throw new UnauthorizedAccessException("you are not administrator.");
@@ -63,14 +64,17 @@ public class CategoryService : ICategoryService
             var isAdmin = _roleHelper.IsAdminUser();
             var userId = _userHelper.UserId();
             if (userId == null) throw new UnauthorizedAccessException();
-            if (!Guid.TryParse(userId, out var userGuid)) throw new ArgumentException("Invalid UserId format.");
+            if (!Guid.TryParse(userId, out var userGuid)) 
+                throw new ArgumentException("Invalid UserId format.");
 
             if (!isAdmin || !await _adminManager.DoesAdminExist(userGuid))
-                throw new UnauthorizedAccessException("you are not administrator.");
+                throw new 
+                    UnauthorizedAccessException("you are not administrator.");
 
             if (await _categoryManager.DoesExist(id))
             {
-                throw new ArgumentException("the category you are trying to update does not exist.");
+                throw new ArgumentException(
+                    "the category you are trying to update does not exist.");
             }
             
             var requestMapper = _mapper.Map<Category>(request);
@@ -92,14 +96,16 @@ public class CategoryService : ICategoryService
             var isAdmin = _roleHelper.IsAdminUser();
             var userId = _userHelper.UserId();
             if (userId == null) throw new UnauthorizedAccessException();
-            if (!Guid.TryParse(userId, out var userGuid)) throw new ArgumentException("Invalid UserId format.");
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
 
             if (!isAdmin || !await _adminManager.DoesAdminExist(userGuid))
                 throw new UnauthorizedAccessException("you are not administrator.");
 
             if (await _categoryManager.DoesExist(id))
             {
-                throw new ArgumentException("the category you are trying to update does not exist.");
+                throw new ArgumentException(
+                    "the category you are trying to update does not exist.");
             }
             
             await _categoryManager.Delete(id);
@@ -120,10 +126,12 @@ public class CategoryService : ICategoryService
             var isAdmin = _roleHelper.IsAdminUser();
             var userId = _userHelper.UserId();
             if (userId == null) throw new UnauthorizedAccessException();
-            if (!Guid.TryParse(userId, out var userGuid)) throw new ArgumentException("Invalid UserId format.");
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
 
             if (!isAdmin || !await _adminManager.DoesAdminExist(userGuid))
-                throw new UnauthorizedAccessException("you are not administrator.");
+                throw new
+                    UnauthorizedAccessException("you are not administrator.");
             var category = await _categoryManager.GetCategory(id);
             var response = _mapper.Map<CategoryResponse>(category);
         
@@ -143,7 +151,8 @@ public class CategoryService : ICategoryService
             var isAdmin = _roleHelper.IsAdminUser();
             var userId = _userHelper.UserId();
             if (userId == null) throw new UnauthorizedAccessException();
-            if (!Guid.TryParse(userId, out var userGuid)) throw new ArgumentException("Invalid UserId format.");
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
 
             if (!isAdmin || !await _adminManager.DoesAdminExist(userGuid))
                 throw new UnauthorizedAccessException("you are not administrator.");

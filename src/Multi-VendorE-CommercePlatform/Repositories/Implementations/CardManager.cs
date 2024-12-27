@@ -139,6 +139,8 @@ public class CardManager:ICardManager
     public async Task<Customer> CustomerId(Guid userId)
     {
         var customerId = await _context.Customers
+            .Include(x=>
+                x.User)
             .FirstOrDefaultAsync(x=> x.UserId == userId);
         if (customerId == null)
         {

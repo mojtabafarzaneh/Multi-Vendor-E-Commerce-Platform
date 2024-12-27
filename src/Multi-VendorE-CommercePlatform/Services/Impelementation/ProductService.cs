@@ -82,15 +82,19 @@ public class ProductService : IProductService
 
             if (!isVendor && !await _productManager.DoesUserExist(userGuid))
             {
-                throw new UnauthorizedAccessException("you can not reach this endpoint");
+                throw new 
+                    UnauthorizedAccessException("you can not reach this endpoint");
             }
 
             if (isVendor)
             {
                 var vendorId = await _productManager.VendorId(userGuid);
 
-                var (products, totalCount) = await _productManager
-                    .GetAll(vendorId, page, pageSize, search, isApproved);
+                var (products, totalCount) = await 
+                    _productManager
+                    .GetAll(
+                        vendorId, page, pageSize,
+                        search, isApproved);
                 var response = _mapper.Map<List<ProductResponse>>(products);
                 return new PagedProductResponse
                 {
@@ -101,7 +105,8 @@ public class ProductService : IProductService
                     TotalPages = (int)Math.Ceiling(totalCount / (double)pageSize)
                 };
             }
-            var (product, totalCounts) = await _productManager
+            var (product, totalCounts) = await 
+                _productManager
                 .GetAll(page, pageSize, search);
             var customerResponse = _mapper.Map<List<ProductResponse>>(product);
             return new PagedProductResponse
@@ -152,7 +157,8 @@ public class ProductService : IProductService
         }
     }
 
-    public async Task UpdateNameAndDescription(UpdateProductNameAndDescription request, Guid id)
+    public async Task UpdateNameAndDescription(
+        UpdateProductNameAndDescription request, Guid id)
     {
         try
         {
@@ -177,7 +183,8 @@ public class ProductService : IProductService
 
             if (request.Name == null || request.Description == null)
             {
-                throw new ArgumentException("You have to provide a name and a description.");
+                throw new ArgumentException(
+                    "You have to provide a name and a description.");
             }
             request.Id = id;
             await _productManager.UpdateNameAndDescription(request);

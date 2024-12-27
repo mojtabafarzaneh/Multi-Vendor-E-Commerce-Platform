@@ -4,6 +4,8 @@ using Multi_VendorE_CommercePlatform.Helpers;
 using Multi_VendorE_CommercePlatform.Models;
 using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
 using Multi_VendorE_CommercePlatform.Services.Interfaces;
+using RabbitMqBrokerLibrary;
+using RabbitMqBrokerLibrary.Broker;
 
 namespace Multi_VendorE_CommercePlatform.Services.Implenetations;
 
@@ -44,7 +46,8 @@ public class CardService: ICardService
                 throw new ArgumentException("Invalid UserId format.");
             if (!isAdmin && !await _cardManager.DoesUserExist(userGuid))
             {
-                throw new UnauthorizedAccessException("you can not reach this endpoint");
+                throw new 
+                    UnauthorizedAccessException("you can not reach this endpoint");
             }
             var customer = await _cardManager.CustomerId(userGuid);
             if (customer == null)
@@ -93,7 +96,8 @@ public class CardService: ICardService
                 throw new ArgumentException("Invalid UserId format.");
             if (!await _cardManager.DoesUserExist(userGuid))
             {
-                throw new UnauthorizedAccessException("you can not reach this endpoint");
+                throw new 
+                    UnauthorizedAccessException("you can not reach this endpoint");
             }
             var customer = await _cardManager.CustomerId(userGuid);
             if (customer == null)
@@ -151,7 +155,8 @@ public class CardService: ICardService
                 throw new ArgumentException("Invalid UserId format.");
             if (!await _cardManager.DoesUserExist(userGuid) && !isAdmin)
             { 
-                throw new UnauthorizedAccessException("you can not reach this endpoint");
+                throw new 
+                    UnauthorizedAccessException("you can not reach this endpoint");
             }
             var cardItem = await _cardManager.GetCardItemById(cardItemId);
             var response = _mapper.Map<CardItemResponse>(cardItem);
@@ -177,7 +182,8 @@ public class CardService: ICardService
                 throw new ArgumentException("Invalid UserId format.");
             if (!await _cardManager.DoesUserExist(userGuid))
             {
-                throw new UnauthorizedAccessException("you can not reach this endpoint");
+                throw new 
+                    UnauthorizedAccessException("you can not reach this endpoint");
             }
             var customer = await _cardManager.CustomerId(userGuid);
             if (customer == null)
@@ -200,8 +206,9 @@ public class CardService: ICardService
 
             if (await _cardManager.DoesCardItemExist(request.ProductId))
             {
-                throw new ArgumentException("this product has already been added to your card," +
-                                            " you can add the quantity in the update endpoint.");
+                throw new ArgumentException(
+                    "this product has already been added to your card," +
+                    " you can add the quantity in the update endpoint.");
             }
             
             var card = await _cardManager.GetCustomerCard(customer.Id);
@@ -230,7 +237,8 @@ public class CardService: ICardService
                 throw new ArgumentException("Invalid UserId format.");
             if (!await _cardManager.DoesUserExist(userGuid))
             {
-                throw new UnauthorizedAccessException("you can not reach this endpoint");
+                throw new 
+                    UnauthorizedAccessException("you can not reach this endpoint");
             }
             var customer = await _cardManager.CustomerId(userGuid);
             if (customer == null)
@@ -258,7 +266,8 @@ public class CardService: ICardService
                 throw new ArgumentException("Invalid UserId format.");
             if (!await _cardManager.DoesUserExist(userGuid))
             {
-                throw new UnauthorizedAccessException("you can not reach this endpoint");
+                throw new 
+                    UnauthorizedAccessException("you can not reach this endpoint");
             }
 
             await _cardManager.DeleteCardItem(cardItemId);
@@ -281,7 +290,8 @@ public class CardService: ICardService
                 throw new ArgumentException("Invalid UserId format.");
             if (!await _cardManager.DoesUserExist(userGuid))
             {
-                throw new UnauthorizedAccessException("you can not reach this endpoint");
+                throw new 
+                    UnauthorizedAccessException("you can not reach this endpoint");
             }
             var customer = await _cardManager.CustomerId(userGuid);
             if (customer == null)
@@ -298,10 +308,6 @@ public class CardService: ICardService
             var orderItems = new List<OrderItem>();
             foreach (var cardItem in cardItems)
             {
-                if (await _cardManager.DoesProductExist(cardItem.ProductId))
-                {
-                    throw new ArgumentException("this product has already been added to your card");
-                }
                 orderItems.Add(new OrderItem
                 {
                     ProductId = cardItem.ProductId,
@@ -309,6 +315,15 @@ public class CardService: ICardService
                     Price = cardItem.Price
                 });
             }
+
+            var emailProducer = new RabbitMqProducer();
+            
+            emailProducer.PublishEmailEvent(new EmailMessage
+            {
+                To = customer.User.Email!,
+                Subject = "Order Confirmation",
+                Body = "Your order has been Placed successfully.",
+            });
 
             await _cardManager.Checkout(customer.Id, order, orderItems);
         }
@@ -329,7 +344,8 @@ public class CardService: ICardService
                 throw new ArgumentException("Invalid UserId format.");
             if (!await _cardManager.DoesUserExist(userGuid))
             {
-                throw new UnauthorizedAccessException("you can not reach this endpoint");
+                throw new 
+                    UnauthorizedAccessException("you can not reach this endpoint");
             }
             var customer = await _cardManager.CustomerId(userGuid);
             if (customer == null)

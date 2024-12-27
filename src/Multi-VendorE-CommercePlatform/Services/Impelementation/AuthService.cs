@@ -31,7 +31,8 @@ public class AuthService : IAuthService
         _vendorManager = vendorManager;
     }
 
-    public async Task<IEnumerable<IdentityError>> CustomerRegistration(CustomerRegistrationRequest request)
+    public async Task<IEnumerable<IdentityError>> CustomerRegistration(
+        CustomerRegistrationRequest request)
     {
         try
         {
@@ -49,13 +50,17 @@ public class AuthService : IAuthService
             };
             var user = _mapper.Map<User>(createUser);
             var customer = _mapper.Map<Customer>(createCustomer);
-            if (customer == null) throw new ArgumentException("Customer is not populated");
+            if (customer == null) throw new ArgumentException(
+                "Customer is not populated");
             user.UserName = user.Email;
-            var errors = await _authManager.RegisterCustomer(user, request.Password);
+            var errors = await _authManager
+                .RegisterCustomer(user, request.Password);
 
-            var enumerable = errors as IdentityError[] ?? errors.ToArray();
-            var identityErrors = enumerable ?? enumerable.ToArray();
-            if (identityErrors.Any()) throw new Exception($"Registration failed: {identityErrors.First().Description}");
+            var enumerable = errors as 
+                IdentityError[] ?? errors.ToArray();
+            var identityErrors = enumerable;
+            if (identityErrors.Any()) throw new Exception(
+                $"Registration failed: {identityErrors.First().Description}");
 
             if (identityErrors.Length == 0)
             {
@@ -72,7 +77,8 @@ public class AuthService : IAuthService
         }
     }
 
-    public async Task<IEnumerable<IdentityError>> VendorRegistration(VendorRegistrationRequest request)
+    public async Task<IEnumerable<IdentityError>> VendorRegistration(
+        VendorRegistrationRequest request)
     {
         try
         {
@@ -95,9 +101,11 @@ public class AuthService : IAuthService
             var errors = await _authManager
                 .RegisterVendor(user, request.Password);
 
-            var enumerable = errors as IdentityError[] ?? errors.ToArray();
-            var identityErrors = enumerable ?? enumerable.ToArray();
-            if (identityErrors.Any()) throw new Exception($"Registration failed: {identityErrors.First().Description}");
+            var enumerable = errors as IdentityError[] ??
+                             errors.ToArray();
+            var identityErrors = enumerable;
+            if (identityErrors.Any()) throw new Exception(
+                $"Registration failed: {identityErrors.First().Description}");
 
             if (identityErrors.Length == 0)
             {
@@ -126,14 +134,19 @@ public class AuthService : IAuthService
         {
             var user = await _authManager.DoesUserExist(request.Email);
 
-            if (user == null) throw new ArgumentException("Email is not populated");
+            if (user == null) throw new ArgumentException(
+                "Email is not populated");
 
-            if (!await _authManager.DoesPasswordValid(user, request.Password))
-                throw new UnauthorizedAccessException("Invalid username or password");
+            if (!await _authManager.DoesPasswordValid(
+                    user, request.Password))
+                throw new UnauthorizedAccessException(
+                    "Invalid username or password");
 
             Debug.Assert(user != null, nameof(user) + " != null");
-            var token = await _authManager.GenerateAuthenticationToken(user);
-            var refreshToken = await _authManager.GenerateAuthenticationRefreshToken(user);
+            var token = await _authManager
+                .GenerateAuthenticationToken(user);
+            var refreshToken = await _authManager
+                .GenerateAuthenticationRefreshToken(user);
             return new AuthUserResponse
             {
                 Token = token,
@@ -152,22 +165,32 @@ public class AuthService : IAuthService
     {
         try
         {
-            var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+            var jwtSecurityTokenHandler = new
+                JwtSecurityTokenHandler();
             _logger.LogInformation($"{request.Token}");
-            var tokenContent = jwtSecurityTokenHandler.ReadJwtToken(request.Token);
+            var tokenContent = jwtSecurityTokenHandler
+                .ReadJwtToken(request.Token);
 
 
             var email = tokenContent.Claims
-                .FirstOrDefault(x => string.Equals(x.Type, "email", StringComparison.OrdinalIgnoreCase))
+                .FirstOrDefault(x =>
+                    string.Equals(
+                        x.Type, "email", 
+                        StringComparison.OrdinalIgnoreCase))
                 ?.Value;
-            if (email == null) throw new UnauthorizedAccessException("Invalid username or password");
+            if (email == null) throw new
+                UnauthorizedAccessException("Invalid username or password");
             var user = await _authManager.DoesUserExist(email);
 
             if (user != null && !await _authManager.DoesTokenExist(request, user))
                 throw new UnauthorizedAccessException("Invalid refresh token");
 
-            var token = await _authManager.GenerateAuthenticationToken(user ?? throw new InvalidOperationException());
-            var refreshToken = await _authManager.GenerateAuthenticationRefreshToken(user);
+            var token = await _authManager
+                .GenerateAuthenticationToken(
+                    user ?? throw new
+                        InvalidOperationException());
+            var refreshToken = await _authManager
+                .GenerateAuthenticationRefreshToken(user);
 
             return new AuthUserResponse
             {

@@ -35,17 +35,22 @@ public class VendorService : IVendorService
             var isVendor = _roleHelper.IsVendorUser();
             var userId = _userHelper.UserId();
             if (userId == null) throw new UnauthorizedAccessException();
-            if (!Guid.TryParse(userId, out var userGuid)) throw new ArgumentException("Invalid UserId format.");
+            if (!Guid.TryParse(userId, out var userGuid))
+                throw new ArgumentException("Invalid UserId format.");
 
             if (!isVendor || !await _vendorManager.DoesVendorExist(userGuid))
                 throw new UnauthorizedAccessException("User is not a Vendor.");
 
             var vendor = await _vendorManager.GetVendorById(userGuid);
-            if (vendor == null) throw new UnauthorizedAccessException("User is not a Vendor.");
+            if (vendor == null) 
+                throw new UnauthorizedAccessException("User is not a Vendor.");
 
-            if (!vendor.Approved) throw new ArgumentException("Your application is currently not approved.");
+            if (!vendor.Approved) 
+                throw new ArgumentException(
+                    "Your application is currently not approved.");
             var vendorResponse = _mapper.Map<VendorResponse>(vendor);
-            vendorResponse.Products = _mapper.Map<ICollection<ProductResponse>>(vendor.Products);
+            vendorResponse.Products = _mapper.Map<ICollection<ProductResponse>>
+                (vendor.Products);
 
             return vendorResponse;
         }
@@ -62,13 +67,18 @@ public class VendorService : IVendorService
         {
             var isVendor = _roleHelper.IsVendorUser();
             var userId = _userHelper.UserId();
-            if (userId == null) throw new UnauthorizedAccessException();
-            if (!Guid.TryParse(userId, out var userGuid)) throw new ArgumentException("Invalid UserId format.");
+            if (userId == null) 
+                throw new UnauthorizedAccessException();
+            if (!Guid.TryParse(userId, out var userGuid)) 
+                throw new ArgumentException("Invalid UserId format.");
 
             if (!isVendor || !await _vendorManager.DoesVendorExist(userGuid))
                 throw new UnauthorizedAccessException("User is not a Vendor.");
             var vendor = await _vendorManager.GetVendorById(userGuid);
-            if (!vendor.Approved) throw new ArgumentException("Your application is currently not approved.");
+            if (!vendor.Approved) 
+                throw new 
+                    ArgumentException(
+                        "Your application is currently not approved.");
 
             await _vendorManager.UpdateEmail(userGuid, request.BusinessEmail);
         }
@@ -87,13 +97,15 @@ public class VendorService : IVendorService
             var userId = _userHelper.UserId();
             if (userId == null) throw new UnauthorizedAccessException();
 
-            if (!Guid.TryParse(userId, out var userGuid)) throw new ArgumentException("Invalid UserId format.");
+            if (!Guid.TryParse(userId, out var userGuid)) 
+                throw new ArgumentException("Invalid UserId format.");
 
             if (!isVendor || !await _vendorManager.DoesVendorExist(userGuid))
                 throw new UnauthorizedAccessException("User is not a Vendor.");
 
             var vendor = await _vendorManager.GetVendorById(userGuid);
-            if (!vendor.Approved) throw new ArgumentException("Your application is currently not approved.");
+            if (!vendor.Approved) throw new
+                ArgumentException("Your application is currently not approved.");
 
             await _vendorManager.Delete(vendor);
         }

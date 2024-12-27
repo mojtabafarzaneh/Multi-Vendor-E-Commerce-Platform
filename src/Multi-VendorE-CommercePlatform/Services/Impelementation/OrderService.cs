@@ -16,7 +16,11 @@ public class OrderService: IOrderService
     private readonly UserHelper _userHelper;
     private readonly IOrderManager _orderManager;
 
-    public OrderService(ILogger<OrderService> logger, IMapper mapper, RoleHelper roleHelper, UserHelper userHelper, IOrderManager orderManager)
+    public OrderService(ILogger<OrderService> logger, 
+        IMapper mapper, 
+        RoleHelper roleHelper, 
+        UserHelper userHelper, 
+        IOrderManager orderManager)
     {
         _logger = logger;
         _mapper = mapper;
@@ -37,7 +41,8 @@ public class OrderService: IOrderService
                 throw new ArgumentException("Invalid UserId format.");
             if (!await _orderManager.DoesUserExist(userGuid))
             {
-                throw new UnauthorizedAccessException("you can not reach this endpoint");
+                throw new 
+                    UnauthorizedAccessException("you can not reach this endpoint");
             }
             var customer = await _orderManager.GetUser(userGuid);
             var order = await _orderManager.GetOrder(customer.Id);
@@ -54,7 +59,8 @@ public class OrderService: IOrderService
 
             if (order.Id != orderItem.OrderId)
             {
-                throw new ArgumentException("The orderId does not match the orderItemId.");
+                throw new ArgumentException(
+                    "The orderId does not match the orderItemId.");
             }
 
             var mappedResponse = _mapper.Map<OrderItemResponse>(orderItem);
@@ -80,7 +86,8 @@ public class OrderService: IOrderService
                 throw new ArgumentException("Invalid UserId format.");
             if (!isVendor)
             {
-                throw new UnauthorizedAccessException("you can not reach this endpoint");
+                throw new 
+                    UnauthorizedAccessException("you can not reach this endpoint");
             }
 
             var orders = await _orderManager.GetAllOrders();
@@ -98,7 +105,8 @@ public class OrderService: IOrderService
                 var mappedOrderItems = _mapper.Map <List<OrderItemResponse>>(oi);
                 foreach (var oiTotalPrice in mappedOrderItems)
                 {
-                    oiTotalPrice.TotalPrice = oiTotalPrice.Price * oiTotalPrice.Quantity;
+                    oiTotalPrice.TotalPrice = oiTotalPrice.Price *
+                                              oiTotalPrice.Quantity;
                     totalPrice += oiTotalPrice.TotalPrice;
                     totalQuantity += oiTotalPrice.Quantity;
                 }
@@ -136,7 +144,8 @@ public class OrderService: IOrderService
                 throw new ArgumentException("Invalid UserId format.");
             if (!await _orderManager.DoesUserExist(userGuid))
             {
-                throw new UnauthorizedAccessException("you can not reach this endpoint");
+                throw new
+                    UnauthorizedAccessException("you can not reach this endpoint");
             }
 
             var customer = await _orderManager.GetUser(userGuid);
@@ -166,7 +175,8 @@ public class OrderService: IOrderService
                 throw new ArgumentException("Invalid UserId format.");
             if (!isVendor)
             {
-                throw new UnauthorizedAccessException("you can not reach this endpoint");
+                throw new
+                    UnauthorizedAccessException("you can not reach this endpoint");
             }
 
             await _orderManager.UpdateStatus(request);
@@ -190,7 +200,8 @@ public class OrderService: IOrderService
                 throw new ArgumentException("Invalid UserId format.");
             if (!isVendor)
             {
-                throw new UnauthorizedAccessException("you can not reach this endpoint");
+                throw new
+                    UnauthorizedAccessException("you can not reach this endpoint");
             }
 
             await _orderManager.Remove(orderId);
