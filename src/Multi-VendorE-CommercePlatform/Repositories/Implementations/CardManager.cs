@@ -245,6 +245,11 @@ public class CardManager:ICardManager
         return await _context.OrderItems.AnyAsync(x => x.ProductId == productId);
     }
 
+    public async Task<bool> DoesCustomerExist(Guid customerId)
+    {
+        return await _context.Orders.AnyAsync(x => x.CustomerId == customerId);
+    }
+
     public async Task Delete(Guid customerId)
     {
         try

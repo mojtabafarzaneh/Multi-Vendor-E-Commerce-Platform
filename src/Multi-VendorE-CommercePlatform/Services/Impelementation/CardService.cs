@@ -308,6 +308,12 @@ public class CardService: ICardService
             var orderItems = new List<OrderItem>();
             foreach (var cardItem in cardItems)
             {
+                if (await _cardManager.DoesCustomerExist(customer.Id) &&
+                    await _cardManager.DoesProductExist(cardItem.ProductId))
+                {
+                    throw new ArgumentException("This order has already pending items.");
+                }
+
                 orderItems.Add(new OrderItem
                 {
                     ProductId = cardItem.ProductId,

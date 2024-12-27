@@ -10,6 +10,7 @@ public interface ICardManager
     public Task Create(Card card, CardItem cardItem, Product product);
     public Task<bool> DoesCustomerHasCard(Guid userId);
     public Task<Customer> CustomerId(Guid userId);
+    public Task<bool> DoesCustomerExist(Guid userId);
     public Task<Product> GetProductInfo(Guid productId);
     public Task<Card> GetCustomerCard(Guid customerId);
     public Task<(List<CardItem>, int)> GetCustomerCardItems(

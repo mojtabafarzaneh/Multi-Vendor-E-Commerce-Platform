@@ -2,7 +2,7 @@ using System.Text;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
 
-namespace RabbitMqBroker.Broker;
+namespace RabbitMqBrokerLibrary.Broker;
 
 public class RabbitMqProducer
 {

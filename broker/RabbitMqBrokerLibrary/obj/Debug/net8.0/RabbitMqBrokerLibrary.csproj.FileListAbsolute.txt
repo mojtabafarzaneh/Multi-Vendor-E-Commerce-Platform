@@ -1,0 +1,13 @@
+C:\Users\mojta\RiderProjects\Multi-VendorE-CommercePlatform\broker\RabbitMqBrokerLibrary\bin\Debug\net8.0\RabbitMqBrokerLibrary.deps.json
+C:\Users\mojta\RiderProjects\Multi-VendorE-CommercePlatform\broker\RabbitMqBrokerLibrary\bin\Debug\net8.0\RabbitMqBrokerLibrary.dll
+C:\Users\mojta\RiderProjects\Multi-VendorE-CommercePlatform\broker\RabbitMqBrokerLibrary\bin\Debug\net8.0\RabbitMqBrokerLibrary.pdb
+C:\Users\mojta\RiderProjects\Multi-VendorE-CommercePlatform\broker\RabbitMqBrokerLibrary\obj\Debug\net8.0\RabbitMqBrokerLibrary.csproj.AssemblyReference.cache
+C:\Users\mojta\RiderProjects\Multi-VendorE-CommercePlatform\broker\RabbitMqBrokerLibrary\obj\Debug\net8.0\RabbitMqBrokerLibrary.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\mojta\RiderProjects\Multi-VendorE-CommercePlatform\broker\RabbitMqBrokerLibrary\obj\Debug\net8.0\RabbitMqBrokerLibrary.AssemblyInfoInputs.cache
+C:\Users\mojta\RiderProjects\Multi-VendorE-CommercePlatform\broker\RabbitMqBrokerLibrary\obj\Debug\net8.0\RabbitMqBrokerLibrary.AssemblyInfo.cs
+C:\Users\mojta\RiderProjects\Multi-VendorE-CommercePlatform\broker\RabbitMqBrokerLibrary\obj\Debug\net8.0\RabbitMqBrokerLibrary.csproj.CoreCompileInputs.cache
+C:\Users\mojta\RiderProjects\Multi-VendorE-CommercePlatform\broker\RabbitMqBrokerLibrary\obj\Debug\net8.0\RabbitMqBrokerLibrary.sourcelink.json
+C:\Users\mojta\RiderProjects\Multi-VendorE-CommercePlatform\broker\RabbitMqBrokerLibrary\obj\Debug\net8.0\RabbitMqBrokerLibrary.dll
+C:\Users\mojta\RiderProjects\Multi-VendorE-CommercePlatform\broker\RabbitMqBrokerLibrary\obj\Debug\net8.0\refint\RabbitMqBrokerLibrary.dll
+C:\Users\mojta\RiderProjects\Multi-VendorE-CommercePlatform\broker\RabbitMqBrokerLibrary\obj\Debug\net8.0\RabbitMqBrokerLibrary.pdb
+C:\Users\mojta\RiderProjects\Multi-VendorE-CommercePlatform\broker\RabbitMqBrokerLibrary\obj\Debug\net8.0\ref\RabbitMqBrokerLibrary.dll

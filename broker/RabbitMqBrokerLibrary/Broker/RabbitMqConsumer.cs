@@ -3,11 +3,11 @@ using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
-namespace RabbitMqBroker.Broker;
+namespace RabbitMqBrokerLibrary.Broker;
 
 public class RabbitMqConsumer
 {
-    private readonly string _hostName = "localhost";
+    public readonly string _hostName = "localhost";
     private readonly string _queueName = "email_queue";
 
     public void StartListening()
