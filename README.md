@@ -41,7 +41,7 @@ The **Multi-Vendor E-Commerce Platform** is a robust application designed for ma
    - Update the appsettings.json file with your database connection string and RabbitMQ configuration.
 5. Run the Application:
    - Use Visual Studio or the .NET CLI to build and run the application.
-   - Open a browser and navigate to http://localhost:[port] to access the platform.
+   - Open a browser and navigate to https://localhost:[5001] to access the platform.
 
 
 
