@@ -6,8 +6,8 @@ namespace RabbitMqBrokerLibrary.Broker;
 
 public class RabbitMqProducer
 {
-    public readonly string _localHost = "localhost";
-    public readonly string _queueName = "email_queue";
+    private readonly string _localHost = "localhost";
+    private readonly string _queueName = "email_queue";
 
     public void PublishEmailEvent(EmailMessage email)
     {
@@ -33,7 +33,7 @@ public class RabbitMqProducer
 
 public class EmailMessage
 {
-    public string To { get; set; }
-    public string Subject { get; set; }
-    public string Body { get; set; }
+    public string? To { get; set; }
+    public string? Subject { get; set; }
+    public string? Body { get; set; }
 }

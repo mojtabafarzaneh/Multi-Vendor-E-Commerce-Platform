@@ -6,6 +6,7 @@ public class Order
     {
         Pending = 1,
         Shipped = 2,
+        Processing = 5,
         Delivered = 3,
         Canceled = 4
     }

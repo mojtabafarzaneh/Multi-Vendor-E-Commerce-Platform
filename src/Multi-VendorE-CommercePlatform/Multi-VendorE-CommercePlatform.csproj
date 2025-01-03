@@ -9,39 +9,41 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="13.0.1"/>
-        <PackageReference Include="FluentValidation" Version="11.11.0"/>
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11"/>
+        <PackageReference Include="AutoMapper" Version="13.0.1" />
+        <PackageReference Include="FluentValidation" Version="11.11.0" />
+        <PackageReference Include="Hangfire" Version="1.8.17" />
+        <PackageReference Include="Hangfire.MemoryStorage" Version="1.8.1.1" />
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.11" />
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.11" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.0">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.0" />
         <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
         <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.1.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore" Version="7.1.0" />
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Contracts\Responses\**"/>
-        <Compile Remove="Contracts\Requests\**"/>
+        <Compile Remove="Contracts\Responses\**" />
+        <Compile Remove="Contracts\Requests\**" />
         <Compile Remove="Contracts\Order\OrderItemResponse.c.cs" />
     </ItemGroup>
 
     <ItemGroup>
-        <EmbeddedResource Remove="Contracts\Responses\**"/>
-        <EmbeddedResource Remove="Contracts\Requests\**"/>
+        <EmbeddedResource Remove="Contracts\Responses\**" />
+        <EmbeddedResource Remove="Contracts\Requests\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <Content Remove="Contracts\Responses\**"/>
-        <Content Remove="Contracts\Requests\**"/>
+        <Content Remove="Contracts\Responses\**" />
+        <Content Remove="Contracts\Requests\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <None Remove="Contracts\Responses\**"/>
-        <None Remove="Contracts\Requests\**"/>
+        <None Remove="Contracts\Responses\**" />
+        <None Remove="Contracts\Requests\**" />
     </ItemGroup>
 
     <ItemGroup>

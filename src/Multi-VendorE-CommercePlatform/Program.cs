@@ -1,14 +1,17 @@
 using System.Text;
+using Hangfire;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Multi_VendorE_CommercePlatform;
 using Multi_VendorE_CommercePlatform.Configuration;
 using Multi_VendorE_CommercePlatform.Helpers;
 using Multi_VendorE_CommercePlatform.Middleware;
 using Multi_VendorE_CommercePlatform.Models;
 using Multi_VendorE_CommercePlatform.Models.Entities;
+using Multi_VendorE_CommercePlatform.OrderBroker;
 using Multi_VendorE_CommercePlatform.Repositories.Implementations;
 using Multi_VendorE_CommercePlatform.Repositories.Interfaces;
 using Multi_VendorE_CommercePlatform.Services.Implenetations;
@@ -17,13 +20,12 @@ using Multi_VendorE_CommercePlatform.Services.Interfaces;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(options =>
 {
-    options.SwaggerDoc("v1", new OpenApiInfo { Title = "Restaurant Management API", Version = "v1" });
+    options.SwaggerDoc("v1",
+        new OpenApiInfo { Title = "Restaurant Management API", Version = "v1" });
 
     options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -53,6 +55,15 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+//Hangfire 
+builder.Services.AddHangfire(config =>
+    config.UseSqlServerStorage(builder
+        .Configuration.GetConnectionString("DefaultConnection")));
+
+
+builder.Services.AddHangfireServer();
+
+
 //Add Authentication
 builder.Services.AddAuthentication(options =>
 {
@@ -77,6 +88,10 @@ builder.Services.AddAuthentication(options =>
 
 //httpContextAccessor
 builder.Services.AddHttpContextAccessor();
+
+//consumer
+builder.Services.AddHostedService<OrderStatusConsumer>();
+builder.Services.AddScoped<OrderStatusProducer>();
 
 
 //mapperConfiguration
@@ -134,11 +149,23 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+GlobalConfiguration.Configuration
+    .UseActivator(new CustomJobActivator(app.Services));
+
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseHangfireDashboard();
+//publisher
+
+RecurringJob.AddOrUpdate<OrderStatusProducer>(
+    "CheckOverDueOrders",
+    producer => producer.ProduceOrderStatus(),
+    Cron.Hourly);
+
 
 app.UseMiddleware<DurationLoggerMiddleware>();
 app.UseMiddleware<ErrorHandlerMiddleware>();

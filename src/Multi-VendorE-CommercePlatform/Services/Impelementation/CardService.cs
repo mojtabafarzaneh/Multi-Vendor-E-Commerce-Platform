@@ -302,7 +302,7 @@ public class CardService: ICardService
             var cardItems = await _cardManager.GetCardItem(card.Id);
             var order = new Order
             {
-                OrderStatus = Order.Status.Pending,
+                OrderStatus = Order.Status.Processing,
                 CustomerId = customer.Id,
             };
             var orderItems = new List<OrderItem>();

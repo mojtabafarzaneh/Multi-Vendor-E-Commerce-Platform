@@ -7,7 +7,7 @@ namespace RabbitMqBrokerLibrary.Broker;
 
 public class RabbitMqConsumer
 {
-    public readonly string _hostName = "localhost";
+    private readonly string _hostName = "localhost";
     private readonly string _queueName = "email_queue";
 
     public void StartListening()

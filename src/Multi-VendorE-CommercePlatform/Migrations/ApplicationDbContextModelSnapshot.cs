@@ -419,19 +419,19 @@ namespace Multi_VendorE_CommercePlatform.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("7f71c6c6-05a5-4141-aa66-2e8cd4cd7270"),
+                            Id = new Guid("bec5d129-7eea-40ab-a31d-6a4910c588da"),
                             Name = "Admin",
                             NormalizedName = "ADMIN"
                         },
                         new
                         {
-                            Id = new Guid("9ba560c1-500c-4f2c-9890-36ac2971fab5"),
+                            Id = new Guid("3c8e4e3f-bae2-4371-b527-974d99ca0117"),
                             Name = "Customer",
                             NormalizedName = "CUSTOMER"
                         },
                         new
                         {
-                            Id = new Guid("15f7a8b1-70da-4c3c-8531-359c7256ab67"),
+                            Id = new Guid("664ab43e-6790-4ddc-9093-7dc4ba170969"),
                             Name = "Vendor",
                             NormalizedName = "VENDOR"
                         });
