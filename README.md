@@ -29,4 +29,20 @@ The **Multi-Vendor E-Commerce Platform** is a robust application designed for ma
 1. **Clone the Repository**:  
    ```bash
    git clone https://github.com/mojtabafarzaneh/Multi-Vendor-E-Commerce-Platform.git
-```
+   ```
+2. **Navigate to the Project Directory:
+   ```bash
+   cd Multi-Vendor-E-Commerce-Platform
+   ```
+3. Set Up the Database:
+   - Create a database in **SQL Server**.
+   - Run the provided **SQL migration** scripts to set up the necessary tables and data.
+4. Configure the Application:
+   - Update the appsettings.json file with your database connection string and RabbitMQ configuration.
+5. Run the Application:
+   - Use Visual Studio or the .NET CLI to build and run the application.
+   - Open a browser and navigate to http://localhost:[port] to access the platform.
+
+
+
+
